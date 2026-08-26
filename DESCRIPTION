@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Tomas", "Radivoyevitch", , "radivot@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9701-1851"))
-Description: The goal is to move code complexity out of analysis scripts and into functions.
+Description: The goal is to move code complexity out of analysis scripts and into functions of this R package.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
