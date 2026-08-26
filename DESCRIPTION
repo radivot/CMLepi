@@ -1,0 +1,14 @@
+Package: CMLepi
+Title: Functions for Analyzing CML data in SEER
+Version: 0.0.0.9000
+Authors@R: 
+    person("Tomas", "Radivoyevitch", , "radivot@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-9701-1851"))
+Description: The goal is to move code complexity out of analysis scripts and into functions.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
