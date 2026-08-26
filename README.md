@@ -11,7 +11,7 @@ The goal of CMLepi is to ...
 You can install the development version of CMLepi like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("radivot/CMLepi")
 ```
 
 ## Example
