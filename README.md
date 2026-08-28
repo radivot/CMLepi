@@ -18,35 +18,35 @@ remotes::install_github("radivot/CMLepi")
 
 To use it you must first gain access to the SEER data via a Windows program called SEER*stat. 
 This involves requesting access (no need for the Plus version) and waiting a day to get it. 
+Once you have it, first work through SEER*Stat's Case Listing tutorial. Next, create a Case Listing session using 
+Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023) as the database (i.e. SEER8), with 
+cases defined by Site and Morphology.Site recode ICD-O-3/WHO 2008} = '      Chronic Myeloid Leukemia'.
+Next, choose the following variables as columns: Patient ID, Sex, Age recode with single ages and 90+, 
+Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Now execute the session. After the
+execution has completed, select all, right-click on the header, display as unformatted raw numbers, and
+export, changing the file names `export.txt` and `export.dic` to `cml8.txt` and `cml8.dic`. Repeat for SEER12 
+and SEER20 (i.e. SEER21 excluding IL), saving to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. As a default, 
+these 3 pairs of files will be assumed to exist in the folder `~/data/CMLepi`. 
 
 
 
 ## Introduction
 
-There is overhead. First work through SEER*Stat's Case Listing tutorial. 
-Next, create a Case Listing session using 
-Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023) as the database (i.e. SEER8), selecting 
-cases with Site and Morphology.Site recode ICD-O-3/WHO 2008} = '      Chronic Myeloid Leukemia'.
-Next, choose the following variables as columns: Patient ID, Sex, Age recode with single ages and 90+, 
-Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Then execute (under actions)
-to create the listing. Select all and right-clicking on the header, display as unformatted raw numbers. Finally,
-export, changing the file names from export.txt and export.dic to cml8.txt and cml8.dic. Repeat for SEER12 
-and SEER20 (i.e. SEER21 excluding IL), calling those files cml12.txt and cml12.dic, and cml20.txt and cml20.dic.
-
-To bring these files into R use the R package SEER2R. This package is no longer on CRAN
-but it is still useful and can be installed from source via 15-year old CRAN read-only files on GitHub.
+Bringing dic/txt file pairs into R tibbles is done by `seer2r()`, wrapper around 
+R package **SEER2R**'s function `read.SeerStat()` that carries out the following work. 
 ``` r
-# pak::pak("cran/SEER2R") installs fine even though not on CRAN anymore due to 6 help page notes on a check
+# pak::pak("cran/SEER2R") #installs fine from  GitHub even though no longer on CRAN
 library(SEER2R)
-n8 = read.SeerStat("Rpacks/SEER2R/cml8.dic",UseVarLabelsInData=FALSE) #get numbers(n)
+n8 = read.SeerStat("~/data/CMLepi/cml8.dic",UseVarLabelsInData=FALSE) #get numbers(n)
 head(n8<-attr(n8,"assignColNames")(n8,c("id","sex","Age","Year","ICDO3","surv","COD")))
 library(tidyverse)
 (n8=n8|>rename(yrdx=Year,agedx=Age)|>as_tibble())
-n8=n8|>mutate(yrdx=yrdx+1800,status=as.numeric(COD>0),surv=surv/365.25)
+n8=n8|>mutate(yrdx=yrdx+1800,surv=surv/365.25)
+n8=n8|>mutate(status=as.numeric(COD>0),.after=surv)
 n8=n8|>mutate(sex=ifelse(sex==1,"Male","Female"))
 (n8=n8|>mutate(sex=as_factor(sex)))
 
-c8 = read.SeerStat("Rpacks/SEER2R/cml8.dic",UseVarLabelsInData=TRUE) 
+c8 = read.SeerStat("~/data/CMLepi/cml8.dic",UseVarLabelsInData=TRUE) 
 head(c8<-attr(c8,"getSubDataByVarName")(c8,c("ICDO3","site")))
 (c8=c8|>rename(histS=ICDO3,CODS=site)|>as_tibble())
 (d8=bind_cols(n8,c8))
@@ -71,8 +71,9 @@ table(d8$histo3,d8$yrdx)
 (d8=d8|>mutate(cancer=ifelse(histo3%in%c(9863,9875),"CML","CMML"),.after=histo3))
 (d8=d8|>select(-histS))
 (d8=d8|>mutate(COD2=ifelse(COD==0,"alive",ifelse((COD>=74)&(COD<=85)|(COD==89),"LC","OC")),.after=COD))
+(d8=d8|>mutate(CODS=as_factor(CODS))) #to save a little memory
 
-mapCOD6=function(D){
+mapCOD7=function(D){
   COD=D$COD #start with vec of integers. Map to a vec of Strings
   CODS=rep("UNK",dim(D)[1]) #set default to "unknown" type of death
   CODS[COD==0]="alive"
@@ -99,23 +100,24 @@ mapCOD6=function(D){
   CODS[COD%in%c(187,190,193)]="YOC" # perinatal conditions
   CODS[COD%in%c(196,208,252)]="YOC" # other causes, including ill-defined and unknown
   # CODS[COD==252]="UNK" # same if no comment => all accounted for
-  D$COD6=as.factor(CODS)
-  D
+  D$COD7=as.factor(CODS)
+  D|>relocate(COD7, .after = COD2)
 }
-(d8=mapCOD6(d8))
+(d8=mapCOD7(d8))
 # # A tibble: 19,252 × 13
-#      id sex    agedx  yrdx ICDO3 histo3 cancer  surv   COD COD2  status CODS                           COD6 
-#   <int> <fct>  <int> <dbl> <int>  <dbl> <chr>  <dbl> <int> <chr>  <dbl> <chr>                          <fct>
-# 1  2075 Female    80  1990  7783   9945 CMML    1.79    78 LC         1 Chronic Myeloid Leukemia       LC   
-# 2  2226 Male      86  1988  7455   9863 CML     1.11   154 OC         1 Diseases of Heart              CV   
-# 3  4093 Female    50  1989  7455   9863 CML     8.10   154 OC         1 Diseases of Heart              CV   
-# 4  5253 Female    71  2002  7455   9863 CML    14.0    208 OC         1 Other Cause of Death           YOC  
-# 5  6614 Female    81  2014  7783   9945 CMML    1.68    85 LC         1 Aleukemic, Subleukemic and NOS LC   
-# 6  8674 Male      63  1998  7503   9875 CML     3.72    78 LC         1 Chronic Myeloid Leukemia       LC   
-# 7  8686 Female    77  1998  7455   9863 CML     4.39    78 LC         1 Chronic Myeloid Leukemia       LC   
-# 8  8767 Male      51  1995  7455   9863 CML     3.67    78 LC         1 Chronic Myeloid Leukemia       LC   
-# 9  8938 Male      58  1997  7455   9863 CML     6.16    78 LC         1 Chronic Myeloid Leukemia       LC   
-#10  8958 Male      52  1997  7455   9863 CML     4.36    78 LC         1 Chronic Myeloid Leukemia       LC 
+#      id sex    agedx  yrdx ICDO3 histo3 cancer  surv status   COD COD2  COD7  CODS                          
+#   <int> <fct>  <int> <dbl> <int>  <dbl> <chr>  <dbl>  <dbl> <int> <chr> <fct> <fct>                         
+# 1  2075 Female    80  1990  7783   9945 CMML    1.79      1    78 LC    LC    Chronic Myeloid Leukemia      
+# 2  2226 Male      86  1988  7455   9863 CML     1.11      1   154 OC    CV    Diseases of Heart             
+# 3  4093 Female    50  1989  7455   9863 CML     8.10      1   154 OC    CV    Diseases of Heart             
+# 4  5253 Female    71  2002  7455   9863 CML    14.0       1   208 OC    YOC   Other Cause of Death          
+# 5  6614 Female    81  2014  7783   9945 CMML    1.68      1    85 LC    LC    Aleukemic, Subleukemic and NOS
+# 6  8674 Male      63  1998  7503   9875 CML     3.72      1    78 LC    LC    Chronic Myeloid Leukemia      
+# 7  8686 Female    77  1998  7455   9863 CML     4.39      1    78 LC    LC    Chronic Myeloid Leukemia      
+# 8  8767 Male      51  1995  7455   9863 CML     3.67      1    78 LC    LC    Chronic Myeloid Leukemia      
+# 9  8938 Male      58  1997  7455   9863 CML     6.16      1    78 LC    LC    Chronic Myeloid Leukemia      
+#10  8958 Male      52  1997  7455   9863 CML     4.36      1    78 LC    LC    Chronic Myeloid Leukemia      
+
 
 ```
 

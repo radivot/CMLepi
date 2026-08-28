@@ -9,6 +9,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
+Depends: dplyr, SEER2R
+Imports: stringr, forcats
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
