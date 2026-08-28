@@ -24,16 +24,23 @@ This involves requesting access (no need for the Plus version) and waiting a day
 ## Introduction
 
 There is overhead. First work through SEER*Stat's Case Listing tutorial. 
-Next, create a list for all cancers of Patient_ID, Sex, Race_recode_White_Black_Other,
-Year_of_diagnosis, Agerecodewith1_year_olds_and_90, Agerecodewithsingle_ages_and_90, Site_recode_ICD_O_3_WHO_2008,
-Histologic_Type_ICD_O_3, Survival_days  (32765 days = 89.7 years means "Unknown"), and COD_to_site_recode. 
-Finally, save the listing as raw code as a CSV file, including a DIC file of the raw code mapping. Repeat 
-for SEER8, SEER12 and SEER20 (i.e. SEER21 excluding IL) databases. Call the csv files s8.txt, s12.txt
-and s20.txt, and place them into ~/data/seer26/csvs.
+Next, create a Case Listing session using 
+Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023) as the database (i.e. SEER8), selecting 
+cases with Site and Morphology.Site recode ICD-O-3/WHO 2008} = '      Chronic Myeloid Leukemia'.
+Next, choose the following variables as columns: Patient ID, Sex, Age recode with single ages and 90+, 
+Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Then execute (under actions)
+to create the listing. Select all and right-clicking on the header, display as unformatted raw numbers. Finally,
+export, changing the file names from export.txt and export.dic to cml8.txt and cml8.dic. Repeat  
+for SEER12 and SEER20 (i.e. SEER21 excluding IL), calling those files cml12.txt and cml12.dic, and cml20.txt and cml20.dic.
 
-
+To bring these files into R use the R package SEER2R. This package is no longer on CRAN
+but it is still useful and can be installed from source via 15-year old CRAN read-only files on GitHub.
 ``` r
-library(CMLepi)
-## basic example code
+pak::pak("cran/SEER2R") #Installs fine: check yields 6 help page notes (no errors or warnings). 
+library(SEER2R)
+c8 = read.SeerStat("Rpacks/SEER2R/cml8.dic",UseVarLabelsInData=FALSE) 
+(DICInfo1 = attr(c8, "DICInfo"))
+str(c8)
+
 ```
 
