@@ -24,8 +24,8 @@ cases by Site and Morphology.Site recode ICD-O-3/WHO 2008 = Chronic Myeloid Leuk
 column variables: Patient ID, Sex, Age recode with single ages and 90+, 
 Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Execute the session. When it
 completes, select all, right-click on the header, pick display unformatted, and
-export to the files `cml8.txt` and `cml8.dic`. Repeat this changing the database to SEER12 and  
-and SEER20 (i.e. SEER21 excluding IL) and save them to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put the
+export to the files `cml8.txt` and `cml8.dic`. Repeat this changing the database to SEER12 and 
+SEER20 (i.e. SEER21 excluding IL) and save them to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put the
 files in the folder `~/data/CMLepi`. 
 
 
