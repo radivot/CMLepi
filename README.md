@@ -16,23 +16,23 @@ You can install the development version of CMLepi like so:
 remotes::install_github("radivot/CMLepi")
 ```
 
-To use it you must first gain access to the SEER data via a Windows program called SEER*stat. 
+To use it you must first gain access to the SEER data via a Windows program called SEER\*stat. 
 This involves requesting access (no need for the Plus version) and waiting a day to get it. 
-Once you have it, first work through SEER*Stat's Case Listing tutorial. Next, create a Case Listing session using 
-Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023) as the database (i.e. SEER8), with 
-cases defined by Site and Morphology.Site recode ICD-O-3/WHO 2008} = '      Chronic Myeloid Leukemia'.
-Next, choose the following variables as columns: Patient ID, Sex, Age recode with single ages and 90+, 
-Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Now execute the session. After the
-execution has completed, select all, right-click on the header, display as unformatted raw numbers, and
-export, changing the file names `export.txt` and `export.dic` to `cml8.txt` and `cml8.dic`. Repeat for SEER12 
-and SEER20 (i.e. SEER21 excluding IL), saving to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. As a default, 
-these 3 pairs of files will be assumed to exist in the folder `~/data/CMLepi`. 
+Once you have it, first work through SEER\*Stat's Case Listing tutorial. Next, create a Case Listing session using 
+Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023), i.e. SEER8. Select 
+cases by Site and Morphology.Site recode ICD-O-3/WHO 2008 = Chronic Myeloid Leukemia and choose the 
+following variables as columns: Patient ID, Sex, Age recode with single ages and 90+, 
+Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Execute the session. After it
+completes, select all, right-click on the header, pick display unformatted, and
+export it to the file names `cml8.txt` and `cml8.dic`. Repeat this process changing only the database to SEER12 and  
+and SEER20 (i.e. SEER21 excluding IL),  and save to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put all
+6 files in the folder `~/data/CMLepi`. 
 
 
 
 ## Introduction
 
-Bringing dic/txt file pairs into R tibbles is done by `seer2r()`, wrapper around 
+Bringing dic/txt file pairs into single R tibbles is done using `seer2r()`. This function is a wrapper around 
 R package **SEER2R**'s function `read.SeerStat()` that carries out the following work. 
 ``` r
 # pak::pak("cran/SEER2R") #installs fine from  GitHub even though no longer on CRAN
