@@ -18,14 +18,14 @@ remotes::install_github("radivot/CMLepi")
 
 To use it you must first gain access to the SEER data via a Windows program called SEER\*stat. 
 This involves requesting access (no need for the Plus version) and waiting a day to get it. 
-Once you have it,  work through SEER\*Stat's Case Listing tutorial and create one using 
+Once you have it,  work through the SEER\*Stat Case Listing tutorial and create one using 
 Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023), i.e. SEER8. Select 
 cases by Site and Morphology.Site recode ICD-O-3/WHO 2008 = Chronic Myeloid Leukemia and choose as 
 column variables: Patient ID, Sex, Age recode with single ages and 90+, 
 Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Execute the session. When it
 completes, select all, right-click on the header, pick display unformatted, and
 export to the files `cml8.txt` and `cml8.dic`. Repeat this changing the database to SEER12 and 
-SEER20 (i.e. SEER21 excluding IL) and save them to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put the
+SEER20 (i.e. SEER21 excluding IL) and save the results to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put these six
 files in the folder `~/data/CMLepi`. 
 
 
@@ -33,7 +33,7 @@ files in the folder `~/data/CMLepi`.
 ## Introduction
 
 Bringing dic/txt file pairs into single R tibbles is done using `seer2r()`. This function is a wrapper around 
-R package **SEER2R**'s function `read.SeerStat()`. The function `seer2r()` does out the following work. 
+R package **SEER2R**'s function `read.SeerStat()`. The following work is done by `seer2r()`. 
 ``` r
 # pak::pak("cran/SEER2R") #installs fine from  GitHub even though no longer on CRAN
 library(SEER2R)
