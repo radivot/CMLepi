@@ -281,7 +281,7 @@ table(d8$status)
 
 The figures produced are
 
-![Figure 1A](man/figures/1A_caseCounts.svg)
-![Figure 1B](man/figures/1B_countsByCodes.svg)
+![Figure 1A](man/figures/1A_caseCounts.png)
+![Figure 1B](man/figures/1B_countsByCodes.png)
 
 
