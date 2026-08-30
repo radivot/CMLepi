@@ -75,34 +75,35 @@ table(d8$histo3,d8$yrdx)
 
 mapCOD7=function(D){
   COD=D$COD #start with vec of integers. Map to a vec of Strings
-  CODS=rep("UNK",dim(D)[1]) #set default to "unknown" type of death
-  CODS[COD==0]="alive"
-  CODS[(COD>=1)&(COD<=73)|(COD==86)|(COD==90)]="CA"
-  CODS[(COD>=74)&(COD<=85)|(COD==89)]="LC"
-  CODS[COD==130]="CA" #in situ (benign)
-  CODS[(COD>=133)&(COD<=145)]="IN" # infection
-  CODS[COD==148]="DK"  # diabetes
-  CODS[COD==151]="YOC"  # alzheimers -> yet other causes
-  CODS[COD==154]="CV"  # heart disease
-  CODS[COD==157]="CV" # hypertension without HD
-  CODS[COD==160]="CV"  #cerebroVasc"
-  CODS[COD==163]= "CV" #"athero"
-  CODS[COD==166]= "CV"     #"aoritic aneurysm"
-  CODS[COD==169]= "CV"  #"other disease of Vasc"
-  CODS[COD==172]= "IN" #"pneumonia"
-  CODS[COD==175]="YOC" # COPD, no signal so smoking makes both. chronic obstructive pulminary disease
-  CODS[COD==178]="YOC" # ulcer
-  CODS[COD==181]="YOC" # liver disease
-  CODS[COD==184]="DK" # kidney disease
-  CODS[COD==199]="ASH" #"accidents"
-  CODS[COD==202]="ASH"  #"suicide"
-  CODS[COD==205]="ASH" # homocide"
-  CODS[COD%in%c(187,190,193)]="YOC" # perinatal conditions
-  CODS[COD%in%c(196,208,252)]="YOC" # other causes, including ill-defined and unknown
-  # CODS[COD==252]="UNK" # same if no comment => all accounted for
-  D$COD7=as.factor(CODS)
+  CODt=rep("UNK",dim(D)[1]) #set default to "unknown" type of death
+  CODt[COD==0]="alive"
+  CODt[(COD>=1)&(COD<=73)|(COD==86)|(COD==90)]="CA"
+  CODt[(COD>=74)&(COD<=85)|(COD==89)]="LC"
+  CODt[COD==130]="CA" #in situ (benign)
+  CODt[(COD>=133)&(COD<=145)]="IN" # infection
+  CODt[COD==148]="DK"  # diabetes
+  CODt[COD==151]="YOC"  # alzheimers -> yet other causes
+  CODt[COD==154]="CV"  # heart disease
+  CODt[COD==157]="CV" # hypertension without HD
+  CODt[COD==160]="CV"  #cerebroVasc"
+  CODt[COD==163]= "CV" #"athero"
+  CODt[COD==166]= "CV"     #"aoritic aneurysm"
+  CODt[COD==169]= "CV"  #"other disease of Vasc"
+  CODt[COD==172]= "IN" #"pneumonia"
+  CODt[COD==175]="YOC" # COPD, no signal so smoking makes both. chronic obstructive pulminary disease
+  CODt[COD==178]="YOC" # ulcer
+  CODt[COD==181]="YOC" # liver disease
+  CODt[COD==184]="DK" # kidney disease
+  CODt[COD==199]="ASH" #"accidents"
+  CODt[COD==202]="ASH"  #"suicide"
+  CODt[COD==205]="ASH" # homocide"
+  CODt[COD%in%c(187,190,193)]="YOC" # perinatal conditions
+  CODt[COD%in%c(196,208,252)]="YOC" # other causes, including ill-defined and unknown
+  # CODt[COD==252]="UNK" # same if no comment => all accounted for
+  D$COD7=as.factor(CODt)
   D|>relocate(COD7, .after = COD2)
 }
+
 (d8=mapCOD7(d8))
 # # A tibble: 19,252 × 13
 #      id sex    agedx  yrdx ICDO3 histo3 cancer  surv status   COD COD2  COD7  CODS                          
@@ -127,14 +128,16 @@ downstream as follows.
 # mkSEERincid.R  (name of this R script)
 library(tidyverse)
 library(CMLepi)
-d8=seer2r("cml8")
-system.time(save(d8,file="~/data/CMLepi/cml8.RData")) 
+system.time({
+  d8=seer2r("cml8")
+  save(d8,file="~/data/CMLepi/cml8.RData")
+  d12=seer2r("cml12")
+  save(d12,file="~/data/CMLepi/cml12.RData")
+  d20=seer2r("cml20")
+  save(d20,file="~/data/CMLepi/cml20.RData")
+})  # 10 secs
 load("~/data/CMLepi/cml8.RData")
-d12=seer2r("cml12") # few secs
-system.time(save(d12,file="~/data/CMLepi/cml12.RData")) 
 load("~/data/CMLepi/cml12.RData") 
-d20=seer2r("cml20") # 5 secs
-system.time(save(d20,file="~/data/CMLepi/cml20.RData")) 
 load("~/data/CMLepi/cml20.RData") 
 
 ######## using prevalence sessions in SEER*stat I get on jan1 2023, pop average of 2022 and 2023 is 140,038,579.0
@@ -154,7 +157,7 @@ dc=d8|>filter(cancer=="CML")
 table(dc$status) # 5500 alive, 9419 dead;12*5500 = 66000 is prevalence on dec31 2023
 
 # now getnumbers of new cases each year in each database
-round(table(d8$cancer,d$yrdx)*12.1)
+round(table(d8$cancer,d8$yrdx)*12.1)
 #      1975 1976 1977 1978 1979 1980 1981 1982 1983 1984 1985 1986 1987 1988 1989 1990 1991 1992 1993 1994 1995 1996 1997 1998 1999 2000
 # CML  2952 3194 2686 2868 3267 3025 2928 2892 3073 3037 3678 2916 3182 3376 2783 2977 3182 3303 3303 3533 3606 3170 3340 3243 3376 3352
 # CMML    0    0    0    0    0    0    0    0    0   12    0  411  411  399  508  544  762  605  847  871  920 1089 1150  871 1186 1101
@@ -173,3 +176,112 @@ round(table(d20$cancer,d20$yrdx)*2.4)
 # CML  3698 3650 3206 3605 3715 3746 3739 3888 4063 4320 4438 4754 4687 4987 5210 5218 5297 5167 5218 5398 5093 5623 5261 5549
 # CMML  883  926  934 1068 1044 1013 1099 1116 1154 1363 1354 1433 1313 1606 1651 1606 1819 1819 1939 2134 2076 2318 2278 2645
 ```
+
+An example of using these newly formed binaries is given below. 
+
+``` r
+# 1_SEERdata.R  (makes Figure 1A and 1B of a CML LE paper I'm developing)
+graphics.off();rm(list=ls()) 
+library(tidyverse)
+load("~/data/CMLepi/cml20.RData") 
+head(d20<-d20%>%filter(histo3%in%c(9863,9875))) #45636
+d20$db="SEER20"
+D20=d20|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
+
+load("~/data/CMLepi/cml12.RData") 
+head(d12<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+d12$db="SEER12"
+D12=d12|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
+
+load("~/data/CMLepi/cml8.RData") 
+head(d8<-d8%>%filter(histo3%in%c(9863,9875))) #14919 
+d8$db="SEER8"
+D8=d8|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
+D=bind_rows(D20,D12,D8)|>mutate(db=as_factor(db)) 
+Dtot=D|>summarize(n=sum(n),.by = c(yrdx,db))
+myt=theme(
+  legend.key.size = unit(0.5, "cm"),
+  legend.position = c(0.2,0.65),
+  legend.text = element_text(size = 9),
+  legend.title = element_text(size = 9, margin = margin(b = 1, unit = "pt")),
+  legend.key.spacing.y = unit(0.0, "cm"),
+  legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")) 
+Dtot|>ggplot(aes(x=yrdx,y=n,col=db))+geom_point(size=1)+
+  labs(y="Number of Cases",x="Year of Diagnosis",col="Database")+
+  ylim(c(0,NA))+theme_classic(base_size=14)+ myt
+ggsave("LE/outs/1A_caseCounts.pdf",width=4,height=2.5) 
+ggsave("LE/outs/1A_caseCounts.svg",width=4,height=2.5) 
+
+D|>ggplot(aes(x=yrdx,y=n,col=db,shape=histo3))+geom_point(size=1)+
+  labs(y="Number of Cases",x="Year of Diagnosis",col="Database",shape="ICD-O-3")+
+  scale_shape_manual(values = c(6,2))+
+  ylim(c(0,NA))+theme_classic(base_size=14)+myt
+ggsave("LE/outs/1B_countsByCodes.pdf",width=4,height=2.5) 
+ggsave("LE/outs/1B_countsByCodes.svg",width=4,height=2.5) 
+
+d=bind_rows(d20,d12,d8) #75880
+d=d|>distinct(pick(-db)) # don't count it as different via db being different
+d # 53254 unique cases = number in figure legend; others there were read off by eye
+
+hist(d$surv) #outlier cluster past 80 are unknown survival times
+(du=d|>filter(surv>80)) # 668 with unknown survival times = 89.7
+table(du$status) # 666 of 668 are dead
+(d0=d|>filter(surv==0)) #261 likely left registry area right after Dx
+table(d$agedx)
+
+d9=d|>filter(agedx>=90) #1295
+table(d9$status)# 91 alive, 1204 dead
+table(d9$COD2) #635 by LC, 569 by OC
+d9OC=d9|>filter(COD2=="OC")
+sort(table(d9OC$CODS)) # heart=223, cerebroVasc=25, athero=11 => 223+25+11=259 in text
+table(d9$COD7) #263 by CVD (3 more via hypertension + 1 via aortic aneurism)
+table(d9$status,d9$yrdx) # tells us to take it up thru 2017 to have most cases dead
+
+d9=d9|>filter(surv<80) # 1159 => lost 136 to survival unknown
+d9=d9|>filter(surv>0) # 1135  => lost 24 more to survival = 0
+d9|>group_by(yrdx)|>summarize(mn=mean(surv))|>t() # and 2017 is where LE peaks before censoring brings it back down
+d9d=d9|>filter(yrdx<=2017)
+table(d9d$status) # 870 dead, 8 still alive
+(d9d=d9d|>mutate(yrG=cut(yrdx,breaks=c(1975,1990,2000,2005,2011,2017),include.lowest=T,dig.lab=4)))
+d9d|>group_by(yrG)|>summarize(mn=mean(surv),sd=sd(surv)) 
+summary(lm(surv~yrdx,data=d9d))
+summary(lmG<-lm(surv~0+yrG,data=d9d))
+(ci=round(cbind(coef(lmG),confint(lmG)),2))
+paste0(ci[,1]," (",ci[,2],", ",ci[,3],")",collapse=", ")
+# "1.02 (0.67, 1.38), 0.92 (0.6, 1.24), 1 (0.73, 1.27), 1.32 (1.08, 1.57), 1.81 (1.58, 2.03)"
+1/3.8 #26%
+1.81/4.0 #45%
+table(d20$COD2) # 8194 by leukemia
+table(d20$CODS) 
+table(d20$CODS=="Chronic Myeloid Leukemia")       # 5210 by CML
+table(d20$CODS=="Aleukemic, Subleukemic and NOS") # 1117 by sub-Leu
+table(d20$CODS=="Acute Myeloid Leukemia")          # 772 by AML
+table(d20$CODS=="Acute Monocytic Leukemia")        # 8 AMoL => AML=780
+table(d20$CODS=="Chronic Lymphocytic Leukemia")   # 220 by CLL
+table(d20$CODS=="Acute Lymphocytic Leukemia")     # 134 by ALL
+table(d20$CODS=="Other Myeloid/Monocytic Leukemia") # 488 by OML
+table(d20$CODS=="Other Acute Leukemia")          # 226 by OAL
+table(d20$CODS=="Other Lymphocytic Leukemia") # 19 OLL
+1117+772+8+220+134+488+226+19 # 2984
+488+226+19 #733 by OL
+1117+780+220+134+733#2984 = sum of subleu=1117,AML=780,CLL=220,ALL=134,OL=733
+8194*2.4# 19665.6  (8194=5210+2984)
+
+p00=d8|>filter(yrdx<2000)
+p00=p00|>mutate(year=yrdx+surv,status=ifelse(year>2000,0,1))
+table(p00$status) 
+#    0    1 
+# 1206 5312 
+12*1206 # = 14472 is prevalence of cases alive entering 2000
+
+table(d8$status) 
+12*5500# = 66000 is prevalence at end of 2023
+
+```
+
+The figures produced are
+
+![Figure 1A](man/figures/1A_caseCounts.svg)
+![Figure 1B](man/figures/1B_countsByCodes.svg)
+
+
