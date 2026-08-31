@@ -24,16 +24,16 @@ cases by Site and Morphology.Site recode ICD-O-3/WHO 2008 = Chronic Myeloid Leuk
 column variables: Patient ID, Sex, Age recode with single ages and 90+, 
 Year of diagnosis, ICD-O-3 Hist/behav, Survival Days, and COD to site recode. Execute the session. When it
 completes, select all, right-click on the header, pick display unformatted, and
-export to the files `cml8.txt` and `cml8.dic`. Repeat this changing the database to SEER12 and 
-SEER20 (i.e. SEER21 excluding IL) and save the results to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic`. Put these six
-files in the folder `~/data/CMLepi`. 
+export to the files `cml8.txt` and `cml8.dic.` Repeat this changing the database to SEER12 and 
+SEER20 (i.e. SEER21 excluding IL) and save the results to `cml12.txt/cml12.dic` and `cml20.txt/cml20.dic.` Put these six
+files in the folder `~/data/CMLepi.` 
 
 
 
 ## Introduction
 
-Bringing dic/txt file pairs into single R tibbles is done using `seer2r()`. This function is a wrapper around 
-R package **SEER2R**'s function `read.SeerStat()`. The following work is done by `seer2r()`. 
+Bringing dic/txt file pairs into single R tibbles is done using `seer2r().` This function is a wrapper around 
+R package **SEER2R**'s function `read.SeerStat().` The following work is done by `seer2r().` 
 ``` r
 # pak::pak("cran/SEER2R") #installs fine from  GitHub even though no longer on CRAN
 library(SEER2R)
@@ -180,15 +180,15 @@ round(table(d20$cancer,d20$yrdx)*2.4)
 # CML  3698 3650 3206 3605 3715 3746 3739 3888 4063 4320 4438 4754 4687 4987 5210 5218 5297 5167 5218 5398 5093 5623 5261 5549
 # CMML  883  926  934 1068 1044 1013 1099 1116 1154 1363 1354 1433 1313 1606 1651 1606 1819 1819 1939 2134 2076 2318 2278 2645
 ```
-Thus there are ~5000 new cases of CML per year in the US and the prevalence of CML is ~66000.  The 
+Thus, there are ~5000 new cases of CML per year in the US and the prevalence of CML is ~66000.  The 
 average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady state.
 
 Two codes define CML. An older and more stable code, 9863, and a newer and more dynamic one, 9875. The new code
-defines CML based on polymerase chain reaction (PCR) detection of the *BCR::ABL1* transcript. Though use of 9875 has been on the rise,  
-9863 continues to  be used, as shown in the second plot made by the code shown below. Most interesting is that 
-a sharp rise in 9875 use around the year 2010 was not accompanied by nearly as sharp of a fall in 9863 use. Thus, it is as if more-sensitive 
-testing caused some overdiagnoses of CML: the first plot shows a surge in total cases also around 2010. 
-This R script below also reveals a large amount of death certificate misclassification of CML patient deaths by CML as deaths by other leukemias.
+defines CML based on polymerase chain reaction (PCR) detection of the *BCR::ABL1* transcript. Though use of 9875 has been on 
+the rise, 9863 continues to  be used, as shown in the second plot made by the script below. Intriguingly,
+the sharp rise in 9875 around 2010 was not accompanied by nearly as sharp a fall in 9863 use. Thus, it is as if more-sensitive 
+testing led to additional diagnoses of CML (a surge in total cases, also around 2010, is seen in the first plot). 
+The script below also reveals substantial misclassification of deaths by CML as deaths by other leukemias.
 
 ``` r
 # 1_SEERdata.R  (makes Figure 1A and 1B of a CML LE paper in the works)
@@ -220,17 +220,15 @@ myt=theme(
 Dtot|>ggplot(aes(x=yrdx,y=n,col=db))+geom_point(size=1)+
   labs(y="Number of Cases",x="Year of Diagnosis",col="Database")+
   ylim(c(0,NA))+theme_classic(base_size=14)+ myt
-ggsave("LE/outs/1A_caseCounts.pdf",width=4,height=2.5) 
-ggsave("LE/outs/1A_caseCounts.svg",width=4,height=2.5) 
-ggsave("LE/outs/1A_caseCounts.png",width=4,height=2.5) 
+ggsave("LE/outs/1A_caseCounts.pdf",width=4,height=2.5) #for paper
+ggsave("LE/outs/1A_caseCounts.png",width=4,height=2.5) #for GitHub
 
 D|>ggplot(aes(x=yrdx,y=n,col=db,shape=histo3))+geom_point(size=1)+
   labs(y="Number of Cases",x="Year of Diagnosis",col="Database",shape="ICD-O-3")+
   scale_shape_manual(values = c(6,2))+
   ylim(c(0,NA))+theme_classic(base_size=14)+myt
-ggsave("LE/outs/1B_countsByCodes.pdf",width=4,height=2.5) 
-ggsave("LE/outs/1B_countsByCodes.svg",width=4,height=2.5) 
-ggsave("LE/outs/1B_countsByCodes.png",width=4,height=2.5) 
+ggsave("LE/outs/1B_countsByCodes.pdf",width=4,height=2.5) #for paper
+ggsave("LE/outs/1B_countsByCodes.png",width=4,height=2.5) #for GitHub
 
 d=bind_rows(d20,d12,d8) #75880
 d=d|>distinct(pick(-db)) # don't count it as different via db being different
@@ -284,22 +282,20 @@ table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
 
 ```
 
-The two figures produced by the script above are
+The figures produced by the script above are
 
 ![Figure 1A](man/figures/1A_caseCounts.png)
 ![Figure 1B](man/figures/1B_countsByCodes.png)
 
 
-Focusing on cases defined by code 9863, the R script below shows that the mean age at diagnosis is stable at 59 years and that 
-the mean age at death levels off at 75 years. Thus, on average, LEs are 16 years. This can be compared to normal (general population) LEs at 
+Focusing on cases defined by code 9863, the script below shows that the mean age at diagnosis is stable at 59 years and that 
+the mean age at death levels at 75 years. Thus, on average, LEs are 16 years. This can be compared to normal (general population) LEs at 
 59 years (sexes and races pooled) of ~24 years.  
-
 
 ``` r
 # 4_yearsLost.R   (This script produces Figures 4A, 4B and 4C of an upcoming CML LE paper)
 graphics.off();rm(list=ls()) 
 library(tidyverse)
-library(SEERaBomb)
 tc=function(sz) theme_classic(base_size=sz)
 load("~/data/CMLepi/cml12.RData") 
 head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
@@ -309,18 +305,18 @@ d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000))
 D=d|>group_by(yrdx,histo3)|>summarize(mage=mean(agedx))#both 
 gh=geom_hline(yintercept=c(50,59),col="gray")
 gv=geom_vline(xintercept=c(1992,2007),col="gray")
+myt=theme(
+  legend.key.size = unit(0.4, "cm"),
+  legend.position = c(0.20,0.4),
+  legend.text = element_text(size = 8),
+  legend.title = element_text(size = 8, margin = margin(b = 1, unit = "pt")),
+  legend.key.spacing.y = unit(0.0, "cm"),
+  legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
+)
 D|>ggplot(aes(x=yrdx,y=mage,group=histo3,col=histo3)) + gh + gv + geom_line()+tc(13)+
   labs(y="Mean Age at Dx",x="Year of Dx",col="ICD-O-3")+
   scale_x_continuous(breaks=c(1992,2000,2007,2023))+
-  scale_y_continuous(breaks=c(50,53,56,59))+
-  theme(
-    legend.key.size = unit(0.4, "cm"),
-    legend.position = c(0.20,0.4),
-    legend.text = element_text(size = 8),
-    legend.title = element_text(size = 8, margin = margin(b = 1, unit = "pt")),
-    legend.key.spacing.y = unit(0.0, "cm"),
-    legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
-  )
+  scale_y_continuous(breaks=c(50,53,56,59))+myt
 ggsave("LE/outs/4A_dxAges.pdf",width=2.5,height=2) 
 ggsave("LE/outs/4A_dxAges.png",width=2.5,height=2) 
 
@@ -328,8 +324,6 @@ ggsave("LE/outs/4A_dxAges.png",width=2.5,height=2)
 # https://github.com/robjhyndman/vital  updated for US HMD data
 library(vital)  
 library(tsibble)
-library(dplyr)
-library(ggplot2)
 files=c("Deaths_1x1.txt", "Exposures_1x1.txt", "Population.txt", "Mx_1x1.txt")
 files=paste0("~/data/hmd_countries/USA/stats/",files) #put files above from HMD into here
 us_mort=read_hmd_files(files) # function in R package vital
@@ -345,7 +339,6 @@ D|>ggplot(aes(x=Year,y=ex))+gh+gv+
 ggsave("LE/outs/4B_normalLEs.pdf",width=3,height=2)
 ggsave("LE/outs/4B_normalLEs.png",width=3,height=2)
 
-
 head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
 d=d|>mutate(surv=ifelse(surv>50,0,surv)) 
 table(d$histo3,d$yrdx)
@@ -358,29 +351,22 @@ gh=geom_hline(yintercept=c(65,75),col="gray")
 DT|>ggplot(aes(x=yrDth,y=mage,group=histo3,col=histo3)) + gh + geom_line()+tc(13)+
   labs(y="Mean Age at Death",x="Year of Death",col="ICD-O-3") + 
   scale_y_continuous(breaks=seq(65,75,5))+geom_smooth()+
-  scale_x_continuous(breaks=c(1975,1986,1992,2000,2010,2023))+
-theme(
-  legend.key.size = unit(0.4, "cm"),
-  legend.position = c(0.85,0.18),
-  legend.text = element_text(size = 8),
-  legend.title = element_text(size = 8, margin = margin(b = 1, unit = "pt")),
-  legend.key.spacing.y = unit(0.0, "cm"),
-  legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
-)
+  scale_x_continuous(breaks=c(1975,1986,1992,2000,2010,2023))+ myt +
+theme(legend.position = c(0.85,0.18))
 ggsave("LE/outs/4C_deathsAges.pdf",width=2.5,height=2)
 ggsave("LE/outs/4C_deathsAges.png",width=2.5,height=2)
 
 ```
 
 
-The figures produced are
+The figures produced by the script above are
 
 ![Figure 4A](man/figures/4A_dxAges.png)
 ![Figure 4B](man/figures/4B_normalLEs.png)
 ![Figure 4C](man/figures/4C_deathsAges.png)
 
-Thus, at a mean age of 59 for 9863-coded diagnoses and a normal LE at 59 of 24.5 years,  ages of patient deaths 
-leveling at ~75 years suggest LEs are 16 years, i.w. on average CML patients lose ~8 years (or one-third) of life. 
+Thus, given a mean age at diagnoses of 59 and a normal LE at 59 of 24.5 years, ages at death 
+leveling at ~75 years implies LEs of 16 years, i.e. on average CML patients lose ~8 years (or one-third) of life. 
 
 
 
