@@ -183,12 +183,12 @@ round(table(d20$cancer,d20$yrdx)*2.4)
 Thus, there are ~5000 new cases of CML per year in the US and the prevalence of CML is ~66000.  The 
 average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady state.
 
-Two codes define CML. An older and more stable code, 9863, and a newer and more dynamic one, 9875. The new code
-defines CML based on polymerase chain reaction (PCR) detection of the *BCR::ABL1* transcript. Though use of 9875 has been on 
-the rise, 9863 continues to  be used, as shown in the second plot made by the script below. Intriguingly,
-the sharp rise in 9875 around 2010 was not accompanied by nearly as sharp a fall in 9863 use. Thus, it is as if more-sensitive 
-testing led to additional diagnoses of CML (a surge in total cases, also around 2010, is seen in the first plot). 
-The script below also reveals substantial misclassification of deaths by CML as deaths by other leukemias.
+Two codes define CML, the older code 9863 and the newer code 9875. The new code
+defines it based on polymerase chain reaction (PCR) detection of *BCR::ABL1*. While use of 9875 has been on 
+the rise, 9863 continues to  be used, as shown in the second plot of the script below. Intriguingly,
+the sharp rise in 9875 cases around 2010 was not accompanied by nearly as sharp a fall in 9863 cases. Thus, it is as if more-sensitive 
+testing led to additional diagnoses, seen as a surge in total cases, also around 2010, in the first plot of the script below. 
+The script below also shows a substantial amount of misclassification of deaths by CML as deaths by other leukemias.
 
 ``` r
 # 1_SEERdata.R  (makes Figure 1A and 1B of a CML LE paper in the works)
@@ -281,16 +281,17 @@ table(d20$CODS=="Other Lymphocytic Leukemia") # 19 OLL
 table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
 
 ```
-
-The figures produced by the script above are
+The figures produced by this are
 
 ![Figure 1A](man/figures/1A_caseCounts.png)
 ![Figure 1B](man/figures/1B_countsByCodes.png)
 
 
-Focusing on cases defined by code 9863, the script below shows that the mean age at diagnosis is stable at 59 years and that 
-the mean age at death levels at 75 years. Thus, on average, LEs are 16 years. This can be compared to normal (general population) LEs at 
-59 years (sexes and races pooled) of ~24 years.  
+Focusing on cases defined by code 9863, the script below shows that the mean age 
+at diagnosis is stable at 59 years and that the mean age at death levels at 75 years. 
+Thus, on average, LEs are 16 years. This can be compared to normal (general population) 
+LEs at 59 years (sexes and races pooled) of ~24 years.
+
 
 ``` r
 # 4_yearsLost.R   (This script produces Figures 4A, 4B and 4C of an upcoming CML LE paper)
@@ -359,7 +360,7 @@ ggsave("LE/outs/4C_deathsAges.png",width=2.5,height=2)
 ```
 
 
-The figures produced by the script above are
+The figures produced by this are
 
 ![Figure 4A](man/figures/4A_dxAges.png)
 ![Figure 4B](man/figures/4B_normalLEs.png)
