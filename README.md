@@ -188,10 +188,10 @@ average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady
 
 ## SEER Incidence Data
 
-The SEER Incidence Database binary files produced above are now used to generate plots of counts of new CML cases per year. The first 
-plot shows the sum of cases defined by either the older code 9863 (based on e.g. the Philadelphia Chromosome) and the newer 
-code 9875 (based on detection of *BCR::ABL1*). The second plot shows case counts for each code separately. Therein we see 
-that while 9875 use is on the rise, 9863 use is not vanishing. The script below also 
+SEER Incidence Data binaries produced above are used below to generate plots of counts of new CML cases per year. The first 
+one shows the sum of cases defined by either the older code 9863 (based on detection of the Philadelphia Chromosome) and the newer 
+code 9875 (based on detection of *BCR::ABL1*). The second plot shows counts for each code separately. In it, while 9875 use is on 
+the rise, 9863 use is not vanishing. The script below also 
 shows that there is substantial misclassification of deaths by CML as deaths by other leukemias.
 
 ``` r
@@ -300,8 +300,8 @@ chronic myelomonocytic leukemia (CMML).
 ## Model-Free LE Estimation
 
 Focusing on cases defined by code 9863 the script below shows that the mean age 
-at diagnosis held flat at 59 years while the mean age at death has been leveling off at 75 years. 
-Thus, on average, these patients have LEs of 16 years. 
+at diagnosis held flat at 59 years while the mean age at death leveled off at 75 years. 
+Thus, CML patient LEs are roughly 16 years on average. 
 
 
 ``` r
