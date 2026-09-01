@@ -381,6 +381,98 @@ Thus, given a mean age at diagnoses of 59 and a normal LE at 59 of 24.5 years, a
 leveling at ~75 years implies LEs of 16 years, i.e. on average CML patients lose ~8 years (or one-third) of life. 
 
 
+## Nationwide Numbers and Ages of Deaths by CML
 
+To explore numbers of deaths by CML nationwide create a SEER\*Stat Frequency Session using (as data)
+Mortality - All COD, Aggregated Total U.S. (1969-2024) <Katrina/Rita Population Adjustment>.
+Select deaths using Site and Morphology.Cause of death recode with COVID-19 = Chronic Myeloid Leukemia, make a Table
+with Age recode with <1 year olds and 90+ in rows and Year of Death in columns, execute it, and export it 
+to `CMLdeaths.txt` and `CMLdeaths.dic.` Place these files in `~/data/CMLepi.`  You can then run the following script.
 
+``` r
+# 2_MortalityDataAB.R
+library(tidyverse)
+# Note that using a case listing makes no sense here since there is no individual level mortality data 
+nms=c("a20","year","count")
+system.time(d <-read_tsv("~/data/CMLepi/CMLdeaths.txt", col_names=nms)) #
+d=d|>mutate(age=ifelse(a20==19,92.5,ifelse(a20==0,0.5,ifelse(a20==1,3,(a20-1)*5+2.5))))
+d=d|>mutate(year=year+1968)
+d=d|>filter(year!=1968,a20!=20)  #1968 is the sum over all years 
+head(d)
+sum(d$count) # 92610
+d|>group_by(year)|>summarize(n=sum(count))|>
+  ggplot(aes(x=year,y=n))+geom_point()+labs(y="Number of Deaths by CML",x="Year of Death")+
+  ylim(c(0,NA))+theme_classic(base_size=14)+
+  geom_hline(yintercept=c(1200),col="gray")+
+  annotate('text',x=1980,y=1300,label='1200 deaths/year',col="gray50",size=4.5)+
+  annotate('text',x=2004.7,y=20,label='2007',col="gray50",size=3)+
+  annotate('text',x=2014.7,y=20,label='2017',col="gray50",size=3)+
+  annotate('text',x=2026.3,y=20,label='2024',col="gray50",size=3)+
+  annotate('text',x=1971.3,y=20,label='1969',col="gray50",size=3)+
+  geom_vline(xintercept=c(1969,2000,2007,2017,2020,2024),col="gray")
+ggsave("LE/outs/2A_deathCounts.pdf",width=5,height=3)
+ggsave("LE/outs/2A_deathCounts.png",width=5,height=3)
+d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) # 28085  (last number in SEER Data section)
+
+d|>group_by(year)|>summarize(mage=weighted.mean(age,count))|> filter(year>1998)|>
+  ggplot(aes(x=year,y=mage))+geom_point()+labs(y="Mean age at death",x="Year of Deaths")+
+  scale_y_continuous(breaks=c(65,70,75))+
+  scale_x_continuous(breaks=c(1999,2010,2024))+
+  theme_classic(base_size=14)
+ggsave("LE/outs/2B_deathAges.pdf",width=3,height=3)  
+ggsave("LE/outs/2B_deathAges.png",width=3,height=3)  
+```
+
+The figures produced by the script above are
+
+![Figure 2A](man/figures/2A_deathCounts.png)
+![Figure 2B](man/figures/2B_deathAges.png)
+
+The second plot above shows a plateauing of the mean age at death, perhaps to roughly 75 years.  
+
+## Nationwide CML Mortality Rates
+
+To plot nationwide CML mortality rates start a SEER\*Stat Rate Session and using 
+Mortality - All COD, Aggregated Total U.S. (1969-2024) <Katrina/Rita Population Adjustment> make a Table
+with Cause of death recode with COVID-19 as pages, Age recode with <1 year olds and 90+ as rows and Year of Death as columns.
+Execute and export it to `rates.txt` and `rates.dic.` Place these files in `~/data/CMLepi.`  You can then run this script.
+
+``` r
+# 2_MortalityDataC.R  #### shows death rate drops in 80's being small 
+library(tidyverse)
+nms=c("COD","a20","year","rate","num","denom")
+d=read_tsv("~/data/CMLepi/rates.txt", col_names=nms) 
+d=d|>mutate(age=ifelse(a20==19,92.5,ifelse(a20==0,0.5,ifelse(a20==1,3,(a20-1)*5+2.5))))
+d=d|>mutate(year=year+1968)
+d=d|>filter(year!=1968,a20!=20)  #1968 is the sum over all years 
+d=d|>filter(COD==78) # 78="        Chronic Myeloid Leukemia" (see rates.dic file)
+(d=d|>filter(age>=30))
+(d=d|>filter(year>=1999))
+(D=d|>mutate(Age=cut(age,c(30,60,80,100)))|>group_by(year,Age)|>summarize(n=sum(num),d=sum(denom)))
+dput(levels(D$Age))
+(ord=c("(30,60]", "(60,80]", "(80,100]")[3:1])
+labs=c("30-59", "60-79", "80-99")[3:1]
+D=D|>mutate(incid=n/d,Age=factor(Age,levels=ord,labels=labs))
+dput(levels(D$Age))
+lh=theme(legend.direction="horizontal")
+D|>ggplot(aes(x=year,y=incid,col=Age))+geom_line()+
+  labs(y="CML Mortality Rate",x="Year",col="Age at Death")+scale_y_log10() +
+  scale_x_continuous(breaks=c(1999,2010,2024))+theme_classic(base_size=14)+
+  theme(
+    legend.key.size = unit(0.5, "cm"),
+    legend.position = c(0.70,0.3),
+    legend.text = element_text(size = 9),
+    legend.title = element_text(size = 9, margin = margin(b = 3, unit = "pt")),
+    legend.key.spacing.y = unit(0.0, "cm"),
+    legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
+  )
+ggsave("LE/outs/2C_noHelpAt80.pdf",width=3,height=3)
+ggsave("LE/outs/2C_noHelpAt80.png",width=3,height=3)
+
+```
+
+The figure produced by the script above is
+![Figure 2C](man/figures/2C_noHelpAt80.png)
+
+This figure shows that there has been very little prevention of death by CML in elderly populations. 
 
