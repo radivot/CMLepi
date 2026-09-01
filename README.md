@@ -293,7 +293,7 @@ The figures produced by the script above are
 A sharp rise in 9875 cases around 2010 was not accompanied by nearly as sharp a fall in 9863 cases, so it 
 seems sensitive tests led to additional diagnoses (i.e. totals surging).  It is unclear if the additional 
 cases are healthy normal people being overdiagnosed (and thus overtreated) or cases that would have otherwise been diagnosed as having 
-chronic myelomonocytic leukemia (CMML).  
+a different myeloproliferative neoplasm such as chronic myelomonocytic leukemia (CMML).  
 
 
 
