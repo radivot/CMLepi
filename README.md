@@ -188,12 +188,11 @@ average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady
 
 ## SEER Incidence Data
 
-Two codes define CML, the older code 9863 and the newer code 9875. The new code
-defines it based on polymerase chain reaction (PCR) detection of *BCR::ABL1*. While use of 9875 has been on 
-the rise, 9863 continues to  be used, as shown in the second plot of the script below. Intriguingly,
-the sharp rise in 9875 cases around 2010 was not accompanied by nearly as sharp a fall in 9863 cases. Thus, it seems more-sensitive 
-testing led to additional diagnoses (total cases in the first plot below surged at the same time). 
-The script below also shows substantial misclassification of deaths by CML as deaths by other leukemias.
+The three SEER Incidence Database binary files produced above are used below to generate two plots of counts of new CML cases per year over 
+the years. The first plot shows the sum of cases defined by either the older code 9863, which is based on e.g. the 
+Philadelphia Chromosome, and the newer code 9875, which is based on sensistive detection of *BCR::ABL1*. The second plot shows case counts 
+for each code separately. This plot shows that while use of 9875 has been on the rise, 9863 continues to be used. The script below also 
+shows substantial misclassification of deaths by CML as deaths by other leukemias.
 
 ``` r
 # 1_SEERdata.R  (makes Figure 1A and 1B of a CML LE paper in the works)
@@ -291,10 +290,17 @@ The figures produced by the script above are
 ![Figure 1A](man/figures/1A_caseCounts.png)
 ![Figure 1B](man/figures/1B_countsByCodes.png)
 
+We thus see a sharp rise in 9875 cases around 2010 that was not accompanied by nearly as sharp a fall in 9863 cases. Thus, it 
+seems sensitive tests led to additional diagnoses (i.e. total cases surging in the first plot at the same time).  It is
+unclear (to me) if these additional cases are healthy normal people being overdiagnosed (and thus overtreated) or 
+cases that would have otherwise been classified as having some other leukemia, e.g. chronic myelomonocytic leukemia (CMML).  
+
+
 
 ## Model-Free LE Estimation
-Focusing on cases defined by code 9863, the script below shows that the mean age 
-at diagnosis is stable at 59 years and that the mean age at death levels at 75 years. 
+
+Focusing on cases defined by the more stable of the two codes, i.e. 9863, the script below shows that the mean age 
+at diagnosis has held flat at 59 years and that the mean age at death has been leveling off in recent years at 75 years. 
 Thus, on average, LEs are 16 years. This can be compared to normal (general population) 
 LEs at 59 years (sexes and races pooled) of ~24 years.
 
