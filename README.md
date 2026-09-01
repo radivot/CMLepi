@@ -60,10 +60,12 @@ table(d8$histo3,d8$yrdx)
 # 9863  244  264  222  237  270  250  242  239  254  251  304  241  263  279  230  246  263
 # 9875    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0    0
 # 9945    0    0    0    0    0    0    0    0    0    1    0   34   34   33   42   45   63
+#
 #      1992 1993 1994 1995 1996 1997 1998 1999 2000 2001 2002 2003 2004 2005 2006 2007 2008
 # 9863  273  273  291  296  261  275  266  275  275  254  212  220  210  222  239  241  240
 # 9875    0    0    1    2    1    1    2    4    2   38   35   39   58   48   68   74  102
 # 9945   50   70   72   76   90   95   72   98   91   89  111  109  121   95  108  111  103
+#
 #      2009 2010 2011 2012 2013 2014 2015 2016 2017 2018 2019 2020 2021 2022 2023
 # 9863  209  190  165  142  154  127  137  157  134  138  170  107  137  131  136
 # 9875   82  164  211  236  223  258  241  291  276  230  284  274  307  259  254
@@ -183,12 +185,15 @@ round(table(d20$cancer,d20$yrdx)*2.4)
 Thus, there are ~5000 new cases of CML per year in the US and the prevalence of CML is ~66000.  The 
 average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady state.
 
+
+## SEER Incidence Data
+
 Two codes define CML, the older code 9863 and the newer code 9875. The new code
 defines it based on polymerase chain reaction (PCR) detection of *BCR::ABL1*. While use of 9875 has been on 
 the rise, 9863 continues to  be used, as shown in the second plot of the script below. Intriguingly,
-the sharp rise in 9875 cases around 2010 was not accompanied by nearly as sharp a fall in 9863 cases. Thus, it is as if more-sensitive 
-testing led to additional diagnoses, seen as a surge in total cases, also around 2010, in the first plot of the script below. 
-The script below also shows a substantial amount of misclassification of deaths by CML as deaths by other leukemias.
+the sharp rise in 9875 cases around 2010 was not accompanied by nearly as sharp a fall in 9863 cases. Thus, it seems more-sensitive 
+testing led to additional diagnoses (total cases in the first plot below surged at the same time). 
+The script below also shows substantial misclassification of deaths by CML as deaths by other leukemias.
 
 ``` r
 # 1_SEERdata.R  (makes Figure 1A and 1B of a CML LE paper in the works)
@@ -281,12 +286,13 @@ table(d20$CODS=="Other Lymphocytic Leukemia") # 19 OLL
 table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
 
 ```
-The figures produced by this are
+The figures produced by the script above are
 
 ![Figure 1A](man/figures/1A_caseCounts.png)
 ![Figure 1B](man/figures/1B_countsByCodes.png)
 
 
+## Model-Free LE Estimation
 Focusing on cases defined by code 9863, the script below shows that the mean age 
 at diagnosis is stable at 59 years and that the mean age at death levels at 75 years. 
 Thus, on average, LEs are 16 years. This can be compared to normal (general population) 
@@ -360,7 +366,7 @@ ggsave("LE/outs/4C_deathsAges.png",width=2.5,height=2)
 ```
 
 
-The figures produced by this are
+The figures produced by the script above are
 
 ![Figure 4A](man/figures/4A_dxAges.png)
 ![Figure 4B](man/figures/4B_normalLEs.png)
