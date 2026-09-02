@@ -189,7 +189,7 @@ average LE is thus >13.2 (=66k/5k) years, as the system may not yet be at steady
 ## SEER Incidence Data
 
 SEER Incidence Data binaries produced above are used below to generate plots of counts of new CML cases per year. The first 
-one shows the sum of cases defined by either the older code 9863 (based on detection of the Philadelphia Chromosome) and the newer 
+one shows the sum of cases defined by either the older code 9863 (based on detection of the Philadelphia Chromosome) or the newer 
 code 9875 (based on detection of *BCR::ABL1*). The second plot shows counts for each code separately. In it, while 9875 use is on 
 the rise, 9863 use is not vanishing. The script below also 
 shows that there is substantial misclassification of deaths by CML as deaths by other leukemias.
@@ -244,23 +244,22 @@ table(du$status) # 666 of 668 are dead
 (d0=d|>filter(surv==0)) #261 likely left registry area right after Dx
 table(d$agedx)
 
-d9=d|>filter(agedx>=90) #1295
-table(d9$status)# 91 alive, 1204 dead
-table(d9$COD2) #635 by LC, 569 by OC
-d9OC=d9|>filter(COD2=="OC")
-sort(table(d9OC$CODS)) # heart=223, cerebroVasc=25, athero=11 => 223+25+11=259 in text
-table(d9$COD7) #263 by CVD (3 more via hypertension + 1 via aortic aneurism)
-table(d9$status,d9$yrdx) # tells us to take it up thru 2017 to have most cases dead
-
-d9=d9|>filter(surv<80) # 1159 => lost 136 to survival unknown
-d9=d9|>filter(surv>0) # 1135  => lost 24 more to survival = 0
-d9|>group_by(yrdx)|>summarize(mn=mean(surv))|>t() # and 2017 is where LE peaks before censoring brings it back down
-d9d=d9|>filter(yrdx<=2017)
-table(d9d$status) # 870 dead, 8 still alive
-(d9d=d9d|>mutate(yrG=cut(yrdx,breaks=c(1975,1990,2000,2005,2011,2017),include.lowest=T,dig.lab=4)))
-d9d|>group_by(yrG)|>summarize(mn=mean(surv),sd=sd(surv)) 
-summary(lm(surv~yrdx,data=d9d))
-summary(lmG<-lm(surv~0+yrG,data=d9d))
+dOld=d|>filter(agedx>=90) #1295
+table(dOld$status)# 91 alive, 1204 dead
+table(dOld$COD2) #635 by LC, 569 by OC
+dOldOC=dOld|>filter(COD2=="OC")
+sort(table(dOldOC$CODS)) # heart=223, cerebroVasc=25, athero=11 => 223+25+11=259 in text
+table(dOld$COD7) #263 by CVD (3 more via hypertension + 1 via aortic aneurism)
+table(dOld$status,dOld$yrdx) # tells us to take it up thru 2017 to have most cases dead
+dOld=dOld|>filter(surv<80) # 1159 => lost 136 to survival unknown
+dOld=dOld|>filter(surv>0) # 1135  => lost 24 more to survival = 0
+dOld|>group_by(yrdx)|>summarize(mn=mean(surv))|>t() # and 2017 is where LE peaks before censoring brings it back down
+dOld=dOld|>filter(yrdx<=2017)
+table(dOld$status) # 870 dead, 8 still alive
+(dOld=dOld|>mutate(yrG=cut(yrdx,breaks=c(1975,1990,2000,2005,2011,2017),include.lowest=T,dig.lab=4)))
+dOld|>group_by(yrG)|>summarize(mn=mean(surv),sd=sd(surv)) 
+summary(lm(surv~yrdx,data=dOld))
+summary(lmG<-lm(surv~0+yrG,data=dOld))
 (ci=round(cbind(coef(lmG),confint(lmG)),2))
 paste0(ci[,1]," (",ci[,2],", ",ci[,3],")",collapse=", ")
 # "1.02 (0.67, 1.38), 0.92 (0.6, 1.24), 1 (0.73, 1.27), 1.32 (1.08, 1.57), 1.81 (1.58, 2.03)"
@@ -378,7 +377,7 @@ The figures produced by the script above are
 ![Figure 4C](man/figures/4C_deathsAges.png)
 
 Thus, given a mean age at diagnoses of 59 and a normal LE at 59 of 24.5 years, ages at death 
-leveling at ~75 years implies LEs of 16 years, i.e. on average CML patients lose ~8 years (or one-third) of life. 
+leveling at ~75 years implies LEs of 16 years and ~8 years (or one-third) of life lost, on average. 
 
 
 ## Nationwide Numbers and Ages of Deaths by CML
@@ -392,13 +391,18 @@ to `CMLdeaths.txt` and `CMLdeaths.dic.` Place these files in `~/data/CMLepi.`  Y
 ``` r
 # 2_MortalityDataAB.R
 library(tidyverse)
-# Note that using a case listing makes no sense here since there is no individual level mortality data 
+# In SEER*stat, use a frequency session to create the mortality table.
+# Note that case listing makes no sense here since there is no individual level mortality data 
 nms=c("a20","year","count")
 system.time(d <-read_tsv("~/data/CMLepi/CMLdeaths.txt", col_names=nms)) #
 d=d|>mutate(age=ifelse(a20==19,92.5,ifelse(a20==0,0.5,ifelse(a20==1,3,(a20-1)*5+2.5))))
 d=d|>mutate(year=year+1968)
 d=d|>filter(year!=1968,a20!=20)  #1968 is the sum over all years 
 head(d)
+#     a20  year count   age
+#   <dbl> <dbl> <dbl> <dbl>
+# 1     0  1969     1   0.5
+# 2     0  1970     4   0.5
 sum(d$count) # 92610
 d|>group_by(year)|>summarize(n=sum(count))|>
   ggplot(aes(x=year,y=n))+geom_point()+labs(y="Number of Deaths by CML",x="Year of Death")+
@@ -412,8 +416,6 @@ d|>group_by(year)|>summarize(n=sum(count))|>
   geom_vline(xintercept=c(1969,2000,2007,2017,2020,2024),col="gray")
 ggsave("LE/outs/2A_deathCounts.pdf",width=5,height=3)
 ggsave("LE/outs/2A_deathCounts.png",width=5,height=3)
-d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) # 28085  (last number in SEER Data section)
-
 d|>group_by(year)|>summarize(mage=weighted.mean(age,count))|> filter(year>1998)|>
   ggplot(aes(x=year,y=mage))+geom_point()+labs(y="Mean age at death",x="Year of Deaths")+
   scale_y_continuous(breaks=c(65,70,75))+
@@ -421,14 +423,22 @@ d|>group_by(year)|>summarize(mage=weighted.mean(age,count))|> filter(year>1998)|
   theme_classic(base_size=14)
 ggsave("LE/outs/2B_deathAges.pdf",width=3,height=3)  
 ggsave("LE/outs/2B_deathAges.png",width=3,height=3)  
+## Compare death counts in 2000-2023 nationwide to those estimated via SEER incidence COD info.
+d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) #total of 28085 deaths by CML in 2000-2023
+5210*2.4# 12.5k by CML with Dx in 2000-2023 + 14.5k alive in 2000 implies an upper limit of 27k dead by CML. 
+# 19.5k + 14.5k = 34k is at least greater than 28k, so Mortality data likely fixed the problem of missclassifications  
+# of deaths as by other leukemias in the Incidence Data. It likely also does a better job of picking up
+# deaths by intense therapy of intense disease, as 8.5k deaths by CML out of 14.5k alive in 2000 still seems high.  
+# Unclear is if the 28k deaths include any via higher rates of CVD deaths caused by chronic use of tyrosine kinase inhibitors. 
+
 ```
 
 The figures produced by the script above are
 
 ![Figure 2A](man/figures/2A_deathCounts.png)
 ![Figure 2B](man/figures/2B_deathAges.png)
-
-The second plot above shows a plateauing of the mean age at death, perhaps to roughly 75 years.  
+The first plot above shows 1200 deaths by CML in the US each year.
+The second plot above shows a plateauing of the mean age at death, perhaps to 75 years.  
 
 ## Nationwide CML Mortality Rates
 
