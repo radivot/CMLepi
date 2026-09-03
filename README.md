@@ -433,9 +433,8 @@ d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) #total of 28085 deaths 
 
 ```
 
-This produces a plot that shows a large drop in numbers in 1999 reflecting removal of CMML from the definition of CML,
-tyrosine kinase inhibitor (TKI) mediated drops in numbers of deaths starting in 2001, and a final steady state 
-of 1200 US deaths by CML each year.  
+This produces a plot that shows a large drop in 1999 due to removal of CMML from the definition of CML,
+tyrosine kinase inhibitor (TKI) mediated drops that started in 2001, and now, ~1200 US deaths by CML each year.  
 ![Figure 2A](man/figures/2A_deathCounts.png)
 Also seen via this script is plateauing of the mean age at death, perhaps to a ~75 years  
 ![Figure 2B](man/figures/2B_deathAges.png)
@@ -481,6 +480,6 @@ ggsave("LE/outs/2C_noHelpAt80.png",width=3,height=3)
 
 ```
 
-This produces a plot that shows very little prevention of CML deaths in elderly populations. 
+This produces a plot that shows very little prevention of death by CML in elderly populations. 
 ![Figure 2C](man/figures/2C_noHelpAt80.png)
-In this plot values here are small because they are rate-limited by CML incidence.  
+Values are small, as they are rate-limited by CML incidence.  
