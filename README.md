@@ -436,7 +436,7 @@ d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) #total of 28085 deaths 
 This produces a plot that shows a large drop in 1999 due to removal of CMML from the definition of CML,
 tyrosine kinase inhibitor (TKI) mediated drops that started in 2001, and now, ~1200 US deaths by CML each year.  
 ![Figure 2A](man/figures/2A_deathCounts.png)
-Also seen via this script is plateauing of the mean age at death, perhaps to a ~75 years  
+Also seen via this script is plateauing of the mean age at death, perhaps to ~75 years.  
 ![Figure 2B](man/figures/2B_deathAges.png)
 
 ## Nationwide CML Mortality Rates
@@ -444,7 +444,7 @@ Also seen via this script is plateauing of the mean age at death, perhaps to a ~
 To plot nationwide CML mortality rates start a SEER\*Stat Rate Session and using 
 Mortality - All COD, Aggregated Total U.S. (1969-2024) <Katrina/Rita Population Adjustment> make a Table
 with Cause of death recode with COVID-19 as pages, Age recode with <1 year olds and 90+ as rows and Year of Death as columns.
-Execute and export it to `rates.txt` and `rates.dic.` Place these files in `~/data/CMLepi.`  You can then run this script.
+Execute and export it to `rates.txt` and `rates.dic`. Place these files in `~/data/CMLepi`.  You can then run this script.
 
 ``` r
 # 2_MortalityDataC.R  #### shows death rate drops in 80's being small 
