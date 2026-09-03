@@ -32,7 +32,7 @@ files in the folder <code>~/data/CMLepi</code>.
 
 ## Introduction
 
-Bringing dic/txt file pairs into single R tibbles is done using `seer2r()`. This function is a wrapper around 
+Bringing dic/txt file pairs into single R tibbles is done using <code>seer2r()</code>. This function is a wrapper around 
 R package **SEER2R**'s function `read.SeerStat()`. The following work is done by `seer2r()`. 
 ``` r
 # pak::pak("cran/SEER2R") #installs fine from  GitHub even though no longer on CRAN
