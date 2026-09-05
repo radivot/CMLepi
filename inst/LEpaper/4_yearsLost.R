@@ -44,7 +44,7 @@ D|>ggplot(aes(x=Year,y=ex))+gh+gv+
 ggsave("LE/outs/4B_normalLEs.pdf",width=3,height=2)
 ggsave("LE/outs/4B_normalLEs.png",width=3,height=2)
 
-head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 d=d|>mutate(surv=ifelse(surv>50,0,surv)) 
 table(d$histo3,d$yrdx)
 d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) # >50 deaths by 9875 after year 2000
