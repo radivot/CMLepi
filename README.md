@@ -485,8 +485,8 @@ This produces a plot that shows very little prevention of death by CML in elderl
 Values are small, as they are rate-limited by CML incidence.  
 
 
-All of the R scripts used in our paper
-*Diagnosis of Chronic Myeloid Leukemia at a Mean Age of 59 Implies a Mean Loss of Roughly 8 of 24 Years of Life in the United States*
-can be found in this repo's `inst/LEpaper` [folder](https://github.com/radivot/CMLepi/tree/master/inst/LEpaper). 
+## Diagnosis of Chronic Myeloid Leukemia at a Mean Age of 59 Implies a Mean Loss of Roughly 8 of 24 Years of Life in the United States
+
+This paper's R scripts can be found in [inst/LEpaper](https://github.com/radivot/CMLepi/tree/master/inst/LEpaper). 
 
 
