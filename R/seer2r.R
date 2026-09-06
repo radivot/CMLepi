@@ -35,7 +35,7 @@ seer2r=function(db,path="~/data/CMLepi") {
   (d=d|>mutate(histo3=as.numeric(str_sub(histS,end=4)),.after=ICDO3))
   d=d|>filter(histo3%in%c(9863,9875,9945)) #leave out rare jCMML=9946 and atypical CML=9876
   (d=d|>mutate(cancer=ifelse(histo3%in%c(9863,9875),"CML","CMML"),.after=histo3))
-  d=d|>select(-histS)
+  d=d|>select(-histS,-ICDO3)
   d=d|>filter(agedx<120) #leave out unknown ages coded as age = 125
   d=d|>mutate(COD2=ifelse(COD==0,"alive",ifelse((COD>=74)&(COD<=85)|(COD==89),"LC","OC")),.after=COD)
   d=d|>mutate(CODS=as_factor(CODS)) #to save a little memory
