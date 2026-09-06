@@ -16,8 +16,9 @@ You can install the development version of CMLepi like so:
 remotes::install_github("radivot/CMLepi")
 ```
 
-To use it you must first gain access to the SEER data via a Windows program called SEER\*stat. 
-This involves requesting access (no need for the Plus version) and waiting a day to get it. 
+To use it you must first gain access to the [SEER Research Data](https://seer.cancer.gov/data/)
+(no need for the Plus version) via a Windows-only program called SEER\*stat. 
+This involves requesting access and waiting to get it. 
 Once you have it,  work through the SEER\*Stat Case Listing tutorial and create one using 
 Incidence - SEER Research Data, 8 Registries, Nov 2025 Sub (1975-2023), i.e. SEER8. Select 
 cases by Site and Morphology.Site recode ICD-O-3/WHO 2008 = Chronic Myeloid Leukemia and choose as 
@@ -485,8 +486,8 @@ This produces a plot that shows very little prevention of death by CML in elderl
 Values are small, as they are rate-limited by CML incidence.  
 
 
-## Diagnosis of Chronic Myeloid Leukemia at a Mean Age of 59 Implies a Mean Loss of Roughly 8 of 24 Years of Life in the United States
-
-This paper's R scripts can be found in [inst/LEpaper](https://github.com/radivot/CMLepi/tree/master/inst/LEpaper). 
+All of the R scripts used in 
+**Diagnosis of Chronic Myeloid Leukemia at a Mean Age of 59 Implies a Mean Loss of Roughly 8 of 24 Years of Life in the United States**
+can be found in [inst/LEpaper](https://github.com/radivot/CMLepi/tree/master/inst/LEpaper). 
 
 
