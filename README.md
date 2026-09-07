@@ -72,7 +72,7 @@ table(d8$histo3,d8$yrdx)
 # 9875   82  164  211  236  223  258  241  291  276  230  284  274  307  259  254
 # 9945  143  121  132  122  144  150  145  163  182  181  184  185  221  198  247
 (d8=d8|>mutate(cancer=ifelse(histo3%in%c(9863,9875),"CML","CMML"),.after=histo3))
-(d8=d8|>select(-histS))
+(d8=d8|>select(-histS,-ICDO3))
 (d8=d8|>mutate(COD2=ifelse(COD==0,"alive",ifelse((COD>=74)&(COD<=85)|(COD==89),"LC","OC")),.after=COD))
 (d8=d8|>mutate(CODS=as_factor(CODS))) #to save a little memory
 
@@ -103,24 +103,24 @@ mapCOD7=function(D){
   CODt[COD%in%c(187,190,193)]="YOC" # perinatal conditions
   CODt[COD%in%c(196,208,252)]="YOC" # other causes, including ill-defined and unknown
   # CODt[COD==252]="UNK" # same if no comment => all accounted for
-  D$COD7=as.factor(CODt)
+  D$COD7=CODt
   D|>relocate(COD7, .after = COD2)
 }
 
 (d8=mapCOD7(d8))
-# # A tibble: 19,252 × 13
-#      id sex    agedx  yrdx ICDO3 histo3 cancer  surv status   COD COD2  COD7  CODS                          
-#   <int> <fct>  <int> <dbl> <int>  <dbl> <chr>  <dbl>  <dbl> <int> <chr> <fct> <fct>                         
-# 1  2075 Female    80  1990  7783   9945 CMML    1.79      1    78 LC    LC    Chronic Myeloid Leukemia      
-# 2  2226 Male      86  1988  7455   9863 CML     1.11      1   154 OC    CV    Diseases of Heart             
-# 3  4093 Female    50  1989  7455   9863 CML     8.10      1   154 OC    CV    Diseases of Heart             
-# 4  5253 Female    71  2002  7455   9863 CML    14.0       1   208 OC    YOC   Other Cause of Death          
-# 5  6614 Female    81  2014  7783   9945 CMML    1.68      1    85 LC    LC    Aleukemic, Subleukemic and NOS
-# 6  8674 Male      63  1998  7503   9875 CML     3.72      1    78 LC    LC    Chronic Myeloid Leukemia      
-# 7  8686 Female    77  1998  7455   9863 CML     4.39      1    78 LC    LC    Chronic Myeloid Leukemia      
-# 8  8767 Male      51  1995  7455   9863 CML     3.67      1    78 LC    LC    Chronic Myeloid Leukemia      
-# 9  8938 Male      58  1997  7455   9863 CML     6.16      1    78 LC    LC    Chronic Myeloid Leukemia      
-#10  8958 Male      52  1997  7455   9863 CML     4.36      1    78 LC    LC    Chronic Myeloid Leukemia      
+##  A tibble: 19,250 × 12
+#       id sex    agedx  yrdx histo3 cancer  surv status   COD COD2  COD7  CODS                          
+#    <int> <fct>  <int> <dbl>  <dbl> <chr>  <dbl>  <dbl> <int> <chr> <chr> <fct>                         
+#  1  2075 Female    80  1990   9945 CMML    1.79      1    78 LC    LC    Chronic Myeloid Leukemia      
+#  2  2226 Male      86  1988   9863 CML     1.11      1   154 OC    CV    Diseases of Heart             
+#  3  4093 Female    50  1989   9863 CML     8.10      1   154 OC    CV    Diseases of Heart             
+#  4  5253 Female    71  2002   9863 CML    14.0       1   208 OC    YOC   Other Cause of Death          
+#  5  6614 Female    81  2014   9945 CMML    1.68      1    85 LC    LC    Aleukemic, Subleukemic and NOS
+#  6  8674 Male      63  1998   9875 CML     3.72      1    78 LC    LC    Chronic Myeloid Leukemia      
+#  7  8686 Female    77  1998   9863 CML     4.39      1    78 LC    LC    Chronic Myeloid Leukemia      
+#  8  8767 Male      51  1995   9863 CML     3.67      1    78 LC    LC    Chronic Myeloid Leukemia      
+#  9  8938 Male      58  1997   9863 CML     6.16      1    78 LC    LC    Chronic Myeloid Leukemia      
+# 10  8958 Male      52  1997   9863 CML     4.36      1    78 LC    LC    Chronic Myeloid Leukemia   
 ```
 
 We use `seer2r()` to make SEER CML incidence binary files that load much faster 

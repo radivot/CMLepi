@@ -67,7 +67,7 @@ seer2r=function(db,path="~/data/CMLepi") {
     CODt[COD%in%c(187,190,193)]="YOC" # perinatal conditions
     CODt[COD%in%c(196,208,252)]="YOC" # other causes, including ill-defined and unknown
     # CODt[COD==252]="UNK" # same if no comment => all accounted for
-    D$COD7=as.factor(CODt)
+    D$COD7=CODt
     D|>relocate(COD7, .after = COD2)
   }
   mapCOD7(d)
