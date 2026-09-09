@@ -3,7 +3,7 @@ graphics.off();rm(list=ls())
 library(tidyverse)
 tc=function(sz) theme_classic(base_size=sz)
 load("~/data/CMLepi/cml12.RData") 
-head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 table(d$histo3,d$yrdx) #see new code really only starts in 2001 
 d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) 
 (d=d|>mutate(histo3=as_factor(histo3)))

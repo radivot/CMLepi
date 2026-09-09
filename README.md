@@ -200,17 +200,17 @@ shows that there is substantial misclassification of deaths by CML as deaths by 
 graphics.off();rm(list=ls()) 
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData") 
-head(d20<-d20%>%filter(histo3%in%c(9863,9875))) #45636
+head(d20<-d20|>filter(histo3%in%c(9863,9875))) #45636
 d20$db="SEER20"
 D20=d20|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 
 load("~/data/CMLepi/cml12.RData") 
-head(d12<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d12<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 d12$db="SEER12"
 D12=d12|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 
 load("~/data/CMLepi/cml8.RData") 
-head(d8<-d8%>%filter(histo3%in%c(9863,9875))) #14919 
+head(d8<-d8|>filter(histo3%in%c(9863,9875))) #14919 
 d8$db="SEER8"
 D8=d8|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 D=bind_rows(D20,D12,D8)|>mutate(db=as_factor(db)) 
@@ -313,7 +313,7 @@ graphics.off();rm(list=ls())
 library(tidyverse)
 tc=function(sz) theme_classic(base_size=sz)
 load("~/data/CMLepi/cml12.RData") 
-head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 table(d$histo3,d$yrdx) #see new code really only starts in 2001 
 d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) 
 (d=d|>mutate(histo3=as_factor(histo3)))
@@ -354,7 +354,7 @@ D|>ggplot(aes(x=Year,y=ex))+gh+gv+
 ggsave("LE/outs/4B_normalLEs.pdf",width=3,height=2)
 ggsave("LE/outs/4B_normalLEs.png",width=3,height=2)
 
-head(d<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 d=d|>mutate(surv=ifelse(surv>50,0,surv)) 
 table(d$histo3,d$yrdx)
 d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) # >50 deaths by 9875 after year 2000

@@ -2,17 +2,17 @@
 graphics.off();rm(list=ls()) 
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData") 
-head(d20<-d20%>%filter(histo3%in%c(9863,9875))) #45636
+head(d20<-d20|>filter(histo3%in%c(9863,9875))) #45636
 d20$db="SEER20"
 D20=d20|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 
 load("~/data/CMLepi/cml12.RData") 
-head(d12<-d12%>%filter(histo3%in%c(9863,9875))) #15325 
+head(d12<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 d12$db="SEER12"
 D12=d12|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 
 load("~/data/CMLepi/cml8.RData") 
-head(d8<-d8%>%filter(histo3%in%c(9863,9875))) #14919 
+head(d8<-d8|>filter(histo3%in%c(9863,9875))) #14919 
 d8$db="SEER8"
 D8=d8|>summarize(n=n(),.by = c(yrdx, histo3,db))|>mutate(histo3=factor(histo3))
 D=bind_rows(D20,D12,D8)|>mutate(db=as_factor(db)) 
