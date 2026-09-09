@@ -40,6 +40,8 @@ ggsave("LE/outs/1B_countsByCodes.png",width=4,height=2.5)
 d=bind_rows(d20,d12,d8) #75880
 d=d|>distinct(pick(-db)) # don't count it as different via db being different
 d # 53254 unique cases = number in figure legend; others there were read off by eye
+system.time(save(d,file="~/data/CMLepi/cml.RData"))  # 0.1 secs 
+# Note: this binary is smaller than cml20.RData (60.8k cases) because it does not include CMML.
 
 hist(d$surv) #outlier cluster past 80 are unknown survival times
 (du=d|>filter(surv>80)) # 668 with unknown survival times = 89.7
