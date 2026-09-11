@@ -1,6 +1,6 @@
 # mkBigCML   # extends biostat3/AgeYearTime.R to make a data file for all ages at Dx
 graphics.off();rm(list=ls())#clear plots and environment 
-library(biostat3)  # loads survival (for Surv and survSplit) 
+library(biostat3)  # for survRate, and survSplit via survival 
 library(tidyverse)  
 options(pillar.sigfig = 5) # Shows 5 significant digits to get decimal after year in tibble prints
 load("~/data/CMLepi/cml.RData") #made in mkSEER.R  53.2k
@@ -65,7 +65,7 @@ system.time(daytsh <- survRate(Surv(PY,status)~age+year+t+sex+histo3, data=Dayt)
 
 (day=day|>rename(PY=tstop,O=event)|>select(age:O))
 load("~/data/mrt/us_mort.RData")
-(m<-us_mort |>filter(Sex == "Total", Year > 1974)|>select(age=Age,year=Year,bkMort=Mortality) ) 
+(m<-us_mort |>filter(Sex == "Total", Year > 1974)|>select(age=Age,year=Year,m=Mortality) ) 
 (day=left_join(day,m))
 save(day,file="~/data/CMLepi/day.RData")  # 30kb file
 
@@ -73,7 +73,7 @@ save(day,file="~/data/CMLepi/day.RData")  # 30kb file
 (dayt=left_join(dayt,m))
 save(dayt,file="~/data/CMLepi/dayt.RData") #219kb file
 
-(m<-us_mort |>filter(Sex != "Total", Year > 1974)|>select(year=Year,age=Age,sex=Sex,bkMort=Mortality) ) 
+(m<-us_mort |>filter(Sex != "Total", Year > 1974)|>select(year=Year,age=Age,sex=Sex,m=Mortality) ) 
 (dayts=dayts|>rename(PY=tstop,O=event)|>select(age:O))
 (dayts=left_join(dayts,m))
 save(dayts,file="~/data/CMLepi/dayts.RData") #311 kb file
@@ -82,10 +82,10 @@ save(dayts,file="~/data/CMLepi/dayts.RData") #311 kb file
 (daytsh=left_join(daytsh,m))
 save(daytsh,file="~/data/CMLepi/daytsh.RData") #463 kb file 
 
-(daytsh=daytsh|>select(age:O)) #keep bak mrt out file
-save(daytsh,file="~/data/CMLepi/daytsh0.RData") #370 kb file 
-(daytsh=daytsh|>mutate(sex=factor(sex),histo3=factor(histo3))) 
-save(daytsh,file="~/data/CMLepi/daytshF.RData") #361 kb not really worth it 
-(daytsh=daytsh|>mutate(age=as.integer(age),year=as.integer(year),t=as.integer(t),O=as.integer(O))) 
-save(daytsh,file="~/data/CMLepi/daytshI.RData") #345 kb, again, not really worth it 
+# (daytsh=daytsh|>select(age:O)) #keep bak mrt out file
+# save(daytsh,file="~/data/CMLepi/daytsh0.RData") #370 kb file 
+# (daytsh=daytsh|>mutate(sex=factor(sex),histo3=factor(histo3))) 
+# save(daytsh,file="~/data/CMLepi/daytshF.RData") #361 kb not really worth it 
+# (daytsh=daytsh|>mutate(age=as.integer(age),year=as.integer(year),t=as.integer(t),O=as.integer(O))) 
+# save(daytsh,file="~/data/CMLepi/daytshI.RData") #345 kb, again, not really worth it 
 
