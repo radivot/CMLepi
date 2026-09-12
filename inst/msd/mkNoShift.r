@@ -17,9 +17,8 @@ d=d|>mutate(surv=ifelse(surv==0,0.01,surv)) #set  0 surv to 0.01 (else survSplit
 (Dayt=Dayt|>mutate(t=Time-1,age=floor(astart),year=floor(ystart),PY=tstop-tstart,.before=COD)|>select(-Time))
 (Dayt=Dayt|>filter(PY>1e-5))  #noise removed => back to size before, so we really didn't need the last split other than to create the time column t
 system.time(dayts <- survRate(Surv(PY,status)~age+year+t+sex, data=Dayt)|>tibble()) #47 secs  89k
-(day=day|>rename(PY=tstop,O=event)|>select(age:O))
+(dayts=dayts|>rename(PY=tstop,O=event)|>select(age:O))
 load("~/data/mrt/us_mort.RData")
 (m<-us_mort |>filter(Sex != "Total", Year > 1974)|>select(year=Year,age=Age,sex=Sex,m=Mortality) ) 
-(dayts=dayts|>rename(PY=tstop,O=event)|>select(age:O))
 (dayts=left_join(dayts,m))
 save(dayts,file="~/data/CMLepi/daytsNoShift.RData") #311 kb file
