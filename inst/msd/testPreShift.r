@@ -1,4 +1,4 @@
-# testPreShift.R   #takehome:  shifting agedx upfront for msd equates to shifting both agedx and yrdx upfront for survSplit
+# testPreShift.R  Shows that adding 0.5 to agedx upfront with msd equals adding it to both agedx and yrdx upfront for survSplit
 graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)  
 load("~/data/CMLepi/cml.RData") #made in mkSEER.R  53.2k
