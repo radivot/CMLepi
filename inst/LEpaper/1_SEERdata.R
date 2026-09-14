@@ -70,8 +70,22 @@ paste0(ci[,1]," (",ci[,2],", ",ci[,3],")",collapse=", ")
 # "1.02 (0.67, 1.38), 0.92 (0.6, 1.24), 1 (0.73, 1.27), 1.32 (1.08, 1.57), 1.81 (1.58, 2.03)"
 1/3.8 #26%
 1.81/4.0 #45%
-table(d20$COD2) # 8194 by leukemia
-table(d20$CODS) 
+
+d20
+# # A tibble: 45,636 × 13
+#        id sex    agedx  yrdx histo3 cancer    surv status   COD COD2  COD7  CODS                                                  db    
+#     <int> <fct>  <int> <dbl>  <dbl> <chr>    <dbl>  <dbl> <int> <chr> <chr> <fct>                                                 <chr> 
+#  1   5253 Female    71  2002   9863 CML    14.0         1   208 OC    YOC   Other Cause of Death                                  SEER20
+#  2   9874 Male      33  2002   9875 CML    21.7         0     0 alive alive Alive                                                 SEER20
+d|>filter(yrdx>=2000) #45636 ... should be and is the same as d20
+# # A tibble: 45,636 × 12
+#        id sex    agedx  yrdx histo3 cancer    surv status   COD COD2  COD7  CODS                                                 
+#     <int> <fct>  <int> <dbl>  <dbl> <chr>    <dbl>  <dbl> <int> <chr> <chr> <fct>                                                
+#  1   5253 Female    71  2002   9863 CML    14.0         1   208 OC    YOC   Other Cause of Death                                 
+#  2   9874 Male      33  2002   9875 CML    21.7         0     0 alive alive Alive                                                
+table(d20$status) # 18748 deaths by all causes (AC)
+table(d20$COD2) # 8194 by leukemia, 10554 by other causes
+sort(table(d20$CODS)) 
 table(d20$CODS=="Chronic Myeloid Leukemia")       # 5210 by CML
 table(d20$CODS=="Aleukemic, Subleukemic and NOS") # 1117 by sub-Leu
 table(d20$CODS=="Acute Myeloid Leukemia")          # 772 by AML
@@ -84,6 +98,13 @@ table(d20$CODS=="Other Lymphocytic Leukemia") # 19 OLL
 1117+772+8+220+134+488+226+19 # 2984
 488+226+19 #733 by OL
 1117+780+220+134+733#2984 = sum of subleu=1117,AML=780,CLL=220,ALL=134,OL=733
+
+table(d20$CODS=="In situ, benign or unknown behavior neoplasm") # 455
+table(d20$CODS=="Miscellaneous Malignant Cancer") # 312
+table(d20$CODS=="Other Cause of Death") # 1806 
+table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
+
 8194*2.4# 19665.6 US CML patient deaths by a leukemia in 2000-2023 among those Diagnosed in 2000-2023
 # to put this in perspective, 2984 deaths by other leukemias is way too high relative to  
-table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
+
+

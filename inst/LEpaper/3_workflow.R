@@ -6,10 +6,21 @@ library(mgcv)
 options(rgl.useNULL = TRUE)
 options(rgl.printRglwidget = TRUE)
 # library(rgl)  #call funcs with ::
-load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
-(d=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
+load("~/data/CMLepi/cml.RData") #made in mkSEER.R
+d20=d|>filter(yrdx>=2000)
+d20|>filter(agedx<90) #44,551 cases with known ages are used to form the grouped data
+d20|>filter(agedx<90,surv>0) # 44,348  => 261 with surv=0 bumped up to surv=0.01 in grouped data
+d20|>filter(agedx<90,surv>0,surv<80) # 43,932 => 348+68 = 416 diagnosed on death certificate, set surv=5 on these 
+
+(d=d20|>filter(agedx<90)) #44,551
+d=d|>mutate(agedx=agedx+0.5)
+d=d|>mutate(surv=ifelse(surv>80,5,surv)) #set NA surv to 5 years (no care)
+d=d|>mutate(surv=ifelse(surv==0,0.01,surv)) #set  0 surv to 0.01 (else survSplit throws 'zero' parameter must be less than any observed times)
+
 load("~/data/CMLepi/Gac.RData") #made in mkMorts.R
-Sex="Both"
+Sex="Male"
+(d=d|>filter(sex==Sex)) #25,320
+
 head(PYin<-d|>mutate(py=surv,age=agedx,year=yrdx)|>select(py,age,year))
 head(PYin<-as.matrix(PYin))
 yrs=1975:2023
@@ -63,22 +74,24 @@ cc1=coord_cartesian(ylim=c(0.015,NA))
 Drr|>ggplot(aes(x=year,y=EAR,col=yG))+geE+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
   geom_line(aes(y=fit),data=pD)+cc1+
   scale_y_log10(breaks=EARbrks)+tc(13)+ghp2+ghp03+ylab("Excess Absolute Risk of Death")+leg+labs(x="Year",color="Data through")
-ggsave(file="LE/outs/3_workflowEAR.pdf",height=3,width=3) # EAR
-
-(D12=D12|>mutate(RR=O/E,rrL=qchisq(.025,2*O)/(2*E),rrU=qchisq(.975,2*O+2)/(2*E)))
-summary(lm1<-lm(log(RR)~ns(year,df=DF),data=D12))
-pD=data.frame(year=2000:2023,yG="2013")
-pD$fit=exp(predict(lm1,newdata=pD))
-(Drr=Drr|>mutate(RR=O/E,rrL=qchisq(.025,2*O)/(2*E),rrU=qchisq(.975,2*O+2)/(2*E)))
-gh1=geom_hline(yintercept=1)
-gh2=geom_hline(yintercept=2,col="gray")
-geR=geom_errorbar(aes(ymin=rrL,ymax=rrU),width=.2,col="gray")
-RRbrks=c(0,1,2,5,10,15)
-Drr|>ggplot(aes(x=year,y=RR,col=yG))+geR+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
-  geom_line(aes(y=fit),data=pD)+
-  scale_y_log10(breaks=RRbrks)+
-  tc(13)+gh2+gh1+ylab("Relative Risk of Death")+leg+labs(x="Year",color="Data through")
-ggsave(file="LE/outs/3_workflowRR.pdf",height=3,width=3) # EAR
+ggsave(file="LE/outs/3_workflowEARm.pdf",height=3,width=3) # EAR for males
+# ggsave(file="LE/outs/3_workflowEAR.pdf",height=3,width=3) # EAR
+# 
+# (D12=D12|>mutate(RR=O/E,rrL=qchisq(.025,2*O)/(2*E),rrU=qchisq(.975,2*O+2)/(2*E)))
+# summary(lm1<-lm(log(RR)~ns(year,df=DF),data=D12))
+# pD=data.frame(year=2000:2023,yG="2013")
+# pD$fit=exp(predict(lm1,newdata=pD))
+# (Drr=Drr|>mutate(RR=O/E,rrL=qchisq(.025,2*O)/(2*E),rrU=qchisq(.975,2*O+2)/(2*E)))
+# gh1=geom_hline(yintercept=1)
+# gh2=geom_hline(yintercept=2,col="gray")
+# geR=geom_errorbar(aes(ymin=rrL,ymax=rrU),width=.2,col="gray")
+# RRbrks=c(0,1,2,5,10,15)
+# Drr|>ggplot(aes(x=year,y=RR,col=yG))+geR+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
+#   geom_line(aes(y=fit),data=pD)+
+#   scale_y_log10(breaks=RRbrks)+
+#   tc(13)+gh2+gh1+ylab("Relative Risk of Death")+leg+labs(x="Year",color="Data through")
+# ggsave(file="LE/outs/3_workflowRRm.pdf",height=3,width=3) # RR for males
+# # ggsave(file="LE/outs/3_workflowRR.pdf",height=3,width=3) # RR
 
 (Ages=seq(min(D$age),max(D$age)))
 (Years=seq(min(D$year),max(D$year)))
