@@ -21,4 +21,4 @@ d0|>mutate(EAR=(O-E)/PY,LL=EAR-1.96*sqrt(O)/PY,UL=EAR+1.96*sqrt(O)/PY,
 #   sex        O       E      PY       EAR        LL        UL      RR     rrL     rrU
 # 1 Female 10918 2821.94 153663. 0.0526872 0.0513544 0.0540200 3.86897 3.79673 3.94223
 # 2 Male   14913 4211.44 194493. 0.0550230 0.0537923 0.0562536 3.54107 3.48446 3.59836
-### there's a tiny bit of round off error diffs in E
+### there are tiny diffs in E

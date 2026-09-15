@@ -20,5 +20,5 @@ d0|>mutate(EAR=(O-E)/PY,LL=EAR-1.96*sqrt(O)/PY,UL=EAR+1.96*sqrt(O)/PY,
 #  sex        O       E      PY       EAR        LL        UL      RR     rrL     rrU
 # 1 Female 10918 2702.55 153663. 0.0534642 0.0521314 0.0547970 4.03989 3.96446 4.11639
 # 2 Male   14913 4055.09 194493. 0.0558269 0.0545962 0.0570575 3.67760 3.61881 3.73711
-# small diffs in E values could be round off errors, i.e. it seems msd() has been working pretty fine 
+# are small diffs in E round off errors?  testD0.R says no
 
