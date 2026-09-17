@@ -15,7 +15,7 @@ seer2r=function(db,path="~/data/CMLepi") {
   # library(SEER2R)
 
   # gimmick to get rid of unwanted notes in R CMD check
-  id=sex=agedx=histo3=surv=yrdx=cancer=COD=CODS=COD2=COD7=histS=site=Year=Age=ICDO3=mapCOD7=NULL
+  id=sex=agedx=histo3=surv=yrdx=cancer=COD=CODS=COD2=COD7=COD12=histS=site=Year=Age=ICDO3=mapCOD7=mapCOD12=NULL
 
   (inF=file.path(path,paste0(db,".dic")))
   # n = SEER2R::read.SeerStat(inF,UseVarLabelsInData=FALSE) #get numbers(n)

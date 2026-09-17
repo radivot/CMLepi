@@ -6,9 +6,10 @@
 #' @param inFile input file.
 #' @param outFile output file.
 #' @returns Nothing is returned. Run for the side effect of creating a list of 12 gam fits in the output file.
-#' @importFrom dplyr mutate rename filter select bind_cols as_tibble relocate last_col
+#' @importFrom dplyr mutate rename filter select relocate last_col summarize group_by
 #' @importFrom forcats as_factor
 #' @importFrom mgcv gam
+#' @importFrom stats poisson
 #' @export
 mkG12<-function(seerHome="~/data/CMLepi",
                inFile="seerMrt.RData",
@@ -93,7 +94,7 @@ mkG12<-function(seerHome="~/data/CMLepi",
 #  104   0.568  #MSC   congenital conditions
 #  105   0.77   #MSC   perinatl condiditions
   dMSC=d|>filter(COD%in%c(91,100:101,103:105))|>mutate(COD="MISC")
-  (L[["MSC"]]=dMSC|>group_by(COD,year,age,sex,denom)%>%summarize(num=sum(num),.groups="drop"))
+  (L[["MSC"]]=dMSC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["MSC"]="Miscellaneous Specific Causes"
 #  106   1.56   #ILL   ill defined (i.e. could include zoom out of CML)
   dILL=d|>filter(COD==106)|>mutate(COD="ILL")
