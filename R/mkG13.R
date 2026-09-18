@@ -1,4 +1,4 @@
-#' Makes Generalized Additive Model for 12 cause of death groups
+#' Makes Generalized Additive Model for 14 cause of death groups
 #'
 #'
 #'
@@ -11,9 +11,9 @@
 #' @importFrom mgcv gam
 #' @importFrom stats poisson
 #' @export
-mkG12<-function(seerHome="~/data/CMLepi",
+mkG13<-function(seerHome="~/data/CMLepi",
                inFile="seerMrt.RData",
-               outFile="G12.RData"){
+               outFile="G13.RData"){
   # # Use mkSEERmrt() to make inFile
   # seerHome="~/data/CMLepi"
   # inFile="seerMrt.RData"
@@ -52,10 +52,10 @@ mkG12<-function(seerHome="~/data/CMLepi",
   (dLC=dLC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop")) # need this to order it same as below
   (L[["LC"]]=dLC)
   tits["LC"]="Leukemic Cause"
-#   83   1.94 #MMC  Miscellaneous Malignant Cancer (could include zoom outs of CML to some cancer)
-  dMMC=d|>filter(COD==83)|>mutate(COD="MMC")
-  (L[["MMC"]]=dMMC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
-  tits["MMC"]="Misc Mal Cancer"
+#   83   1.94 #MCA  Miscellaneous malignant CAncer (could include zoom outs of CML to some cancer)
+  dMCA=d|>filter(COD==83)|>mutate(COD="MCA")
+  (L[["MCA"]]=dMCA|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
+  tits["MCA"]="Misc CAncer"
 #   84   0.552 #BEN  Benign (also could include zoom outs of CML, if someone thinks it is pretty benign)
   dBEN=d|>filter(COD==84)|>mutate(COD="BEN")
   (L[["BEN"]]=dBEN|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
@@ -72,7 +72,7 @@ mkG12<-function(seerHome="~/data/CMLepi",
   (dDK=d|>filter(COD%in%c(90,102))|>mutate(COD="DK"))  #90=DM,  # 102 = kidney disease
   (L[["DK"]]=dDK|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["DK"]="DM & Kidney Disease"
-#   91   2.58      #MSC    Alzheimers
+#   91   2.58      #MSPC    Alzheimers
 #   92  34.8       #CV  Heart Disease
 #   93   0.99      #CV  Hypertension without Heart Disease
 #   94   7.67      #CV  Cerebrovascular Diseases
@@ -87,15 +87,18 @@ mkG12<-function(seerHome="~/data/CMLepi",
   dCOPD=d|>filter(COD==99)|>mutate(COD="COPD")
   (L[["COPD"]]=dCOPD|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["COPD"]="COPD"
-#  100   0.238  #MSC   stomach ulcers
-#  101   1.61   #MSC   liver disease
+#  100   0.238  #MSPC   stomach ulcers
+#  101   1.61   #LIV   liver disease
+  dLIV=d|>filter(COD==101)|>mutate(COD="LIV")
+  (L[["LIV"]]=dLIV|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
+  tits["LIV"]="LIVer disease"
 #  102   1.72   #DK    kidney disease
-#  103   0.025  #MSC   Complications of birth
-#  104   0.568  #MSC   congenital conditions
-#  105   0.77   #MSC   perinatl condiditions
-  dMSC=d|>filter(COD%in%c(91,100:101,103:105))|>mutate(COD="MISC")
-  (L[["MSC"]]=dMSC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
-  tits["MSC"]="Miscellaneous Specific Causes"
+#  103   0.025  #MSPC   Complications of birth
+#  104   0.568  #MSPC   congenital conditions
+#  105   0.77   #MSPC   perinatl condiditions
+  dMSPC=d|>filter(COD%in%c(91,100,103:105))|>mutate(COD="MSPC")
+  (L[["MSPC"]]=dMSPC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
+  tits["MSPC"]="Miscellaneous SPecific Causes"
 #  106   1.56   #ILL   ill defined (i.e. could include zoom out of CML)
   dILL=d|>filter(COD==106)|>mutate(COD="ILL")
   (L[["ILL"]]=dILL|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
@@ -126,7 +129,7 @@ mkG12<-function(seerHome="~/data/CMLepi",
   save(G,L,tits,file=file.path(seerHome,outFile))
 }
 
-# WARNING: the 12 Mortality Data based COD groups defined above need to be synced up with 12 incidence data COD12 defs
+# WARNING: the 13 Mortality Data based COD groups defined above need to be synced up with 13 incidence data COD13 defs
 
 # US mort defs
 #  0 = "All Causes of Death"
