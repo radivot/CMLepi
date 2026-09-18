@@ -15,7 +15,7 @@ seer2r=function(db,path="~/data/CMLepi") {
   # library(SEER2R)
 
   # gimmick to get rid of unwanted notes in R CMD check
-  id=sex=agedx=histo3=surv=yrdx=cancer=COD=CODS=COD2=COD7=COD12=histS=site=Year=Age=ICDO3=mapCOD7=mapCOD12=NULL
+  id=sex=agedx=histo3=surv=yrdx=cancer=COD=CODS=COD2=COD7=COD13=histS=site=Year=Age=ICDO3=NULL
 
   (inF=file.path(path,paste0(db,".dic")))
   # n = SEER2R::read.SeerStat(inF,UseVarLabelsInData=FALSE) #get numbers(n)
@@ -71,17 +71,17 @@ seer2r=function(db,path="~/data/CMLepi") {
     D|>relocate(COD7, .after = COD2)
   }
   d=mapCOD7(d)
-  mapCOD12=function(D){
+  mapCOD13=function(D){
     COD=D$COD #start with vec of integers. Map to a vec of Strings
     CODt=rep("UNK",dim(D)[1]) #set default to "unknown" type of death
     CODt[COD==0]="alive"
     CODt[(COD>=1)&(COD<=73)|(COD==90)]="CA"
     CODt[(COD>=74)&(COD<=85)|(COD==89)]="LC"
-    CODt[COD==86]="MMC" #Miscellaneous Malignant Cancer
+    CODt[COD==86]="MCA" #Miscellaneous malignant CAncer
     CODt[COD==130]="BEN" #in situ (benign)
     CODt[(COD>=133)&(COD<=145)]="IN" # infection
     CODt[COD==148]="DK"  # diabetes
-    CODt[COD==151]="MSC"  # alzheimers -> miscellaneous specific cause
+    CODt[COD==151]="MSPC"  # alzheimers -> miscellaneous specific cause
     CODt[COD==154]="CV"  # heart disease
     CODt[COD==157]="CV" # hypertension without HD
     CODt[COD==160]="CV"  #cerebroVasc"
@@ -90,19 +90,19 @@ seer2r=function(db,path="~/data/CMLepi") {
     CODt[COD==169]= "CV"  #"other disease of Vasc"
     CODt[COD==172]= "IN" #"pneumonia"
     CODt[COD==175]="COPD" # COPD, chronic obstructive pulminary disease
-    CODt[COD==178]="MSC" # ulcer
-    CODt[COD==181]="MSC" # liver disease
+    CODt[COD==178]="MSPC" # ulcer
+    CODt[COD==181]="LIV" # liver disease
     CODt[COD==184]="DK" # kidney disease
     CODt[COD==196]="ILL" # ill-defined and unknown"
     CODt[COD==199]="ASH" #"accidents"
     CODt[COD==202]="ASH"  #"suicide"
     CODt[COD==205]="ASH" # homocide"
-    CODt[COD%in%c(187,190,193)]="MSC" # perinatal conditions
+    CODt[COD%in%c(187,190,193)]="MSPC" # perinatal conditions
     CODt[COD==208]="OCD" # Other Causes of Death = 208
-    CODt[COD==252]="ILL" # no DC or DC but no COD => send to smaller set ILL to keep OCD clean
-    # CODt[COD==252]="UNK" # same if no comment => all accounted for
-    D$COD12=CODt
-    D|>relocate(COD12, .after = COD7)
+    # CODt[COD==252]="OCD" # no DC or DC but no COD => send OCD
+    CODt[COD==252]="UNK" # no DC or DC but no COD (decide later where to send these)
+    D$COD13=CODt
+    D|>relocate(COD13, .after = COD7)
   }
-  mapCOD12(d)
+  mapCOD13(d)
 }
