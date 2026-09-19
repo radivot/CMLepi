@@ -52,52 +52,63 @@ leg=theme(legend.margin=margin(0,0,0,0),legend.title=element_blank(),
 gyE=ylab("Excess Absolute Risk of Death")
 geE=geom_errorbar(aes(ymin=LL,ymax=UL),width=0.2)#for absolute risks
 jco=ggsci::scale_color_jco()
+shps=scale_shape_manual(values = c("circle", "triangle", "square","diamond","square cross"))
 tc=function(sz) theme_classic(base_size=sz)
 gh0=geom_hline(yintercept=0)
 gx=xlab("Years Since CML Diagnosis")
-ccE=coord_cartesian(ylim=c(-0.003,0.02))
-Dt|>filter(cause%in%c("CV","DK","ASH"))|>mutate(cause=factor(cause,levels=c("CV","DK","ASH")))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx +ccE
-ggsave(file=paste0("LExtra/outs/7C_tki.pdf"),height=3,width=3) # TKI driven excess risks rise with aging
+
+codA=c("LC","CV","ASH","DK")
+Dt|>filter(cause%in%codA)|>mutate(cause=factor(cause,levels=codA))|>
+  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+gh0 +ghE+geEAR+geom_line()+geom_point(size=2)+shps+
+  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+ leg + gx 
+ggsave(file=paste0("LExtra/outs/7A_LCtki.pdf"),height=3,width=4.2) # TKI driven excess risks rise with aging
 # ASH is TKI cost driven, so its excess risk should fall with calendar time and thus aging, as seen here 
 
-Dt|>filter(cause%in%c("LIV","MSPC"))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx # +ccE
-ggsave(file=paste0("LExtra/outs/7D_better.pdf"),height=3,width=3)
+codB=c("OCD","BEN","MCA","ILL")
+Dt|>filter(cause%in%codB)|>mutate(cause=factor(cause,levels=codB))|>
+  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+gh0+ghE+geEAR+geom_line()+geom_point(size=2)+shps+
+  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13) + leg + gx
+ggsave(file=paste0("LExtra/outs/7B_zoomOut.pdf"),height=3,width=4.2)
+## mca = miscellaneous malignant cancers is a grab bag, so include zoomed out CMLs
+## ILL = ill-defined cancers may also include zoomed out CMLs
+
+
+ccE=coord_cartesian(ylim=c(-0.002,0.005))
+ghE=geom_hline(yintercept=c(0.005),col="gray")
+Dt|>filter(cause%in%c("COPD","CA","IN","LIV","MSPC"))|>
+  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+gh0+geom_line()+#ghE+#geEAR+
+  geom_point(size=2)+  gyE+shps+
+  # scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ 
+  jco+tc(13) + leg + gx# +ccE
+ggsave(file=paste0("LExtra/outs/7C_misc.pdf"),height=3,width=4.2)
+## excess in first 5 years is via coincidental. IN staying up longer could be CML weakening immunity against infections
 # surviving CML selects for those who drink less alcohol, so LIV down with time. 
-#   91   2.58   #MSPC    Alzheimers            so MSPC is mostly alzheimers ... not clear why it would trend down
+## mspc = miscellaneous specific cancers, so not expected to include CML, and does not
+#   91   2.58   #MSPC    Alzheimers     ... so MSPC is mostly alzheimers
 #  100   0.238  #MSPC   stomach ulcers
 #  103   0.025  #MSPC   Complications of birth
 #  104   0.568  #MSPC   congenital conditions
 #  105   0.77   #MSPC   perinatl condiditions   
 
-Dt|>filter(cause%in%c("CA","IN"))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx # +ccE
-ggsave(file=paste0("LExtra/outs/7D_CA_IN.pdf"),height=3,width=3)
-## excess in first 5 years is via coincidental. IN staying up longer could be CML weakening immunity against infections
+# 
+# Dt|>filter(cause%in%c("LIV","MSPC"))|>
+#   ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
+#   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx # +ccE
+# ggsave(file=paste0("LExtra/outs/7x_better.pdf"),height=3,width=3)
+# 
 
-Dt|>filter(cause%in%c("MCA","ILL"))|>mutate(cause=as_factor(cause))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx
-ggsave(file=paste0("LExtra/outs/7_zoomOut.pdf"),height=3,width=3)
-## mspc = miscellaneous specific cancers, so not expected to include CML, and does not
-## mca = miscellaneous malignant cancers is a grab bag, so include zoomed out CMLs
-## ILL = ill-defined cancers may also include zoomed out CMLs
 
-ccE=coord_cartesian(ylim=c(-0.003,0.01))
-Dt|>filter(cause%in%c("BEN","OCD"))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx +ccE
-ggsave(file=paste0("LExtra/outs/7_BEN-OCD+.pdf"),height=3,width=3) # obs includes 252 = no DC
-# ggsave(file=paste0("LExtra/outs/7_BEN-OCD.pdf"),height=3,width=3) # obs is strictly OCD
-## BEN looks like coincidental CML brought about via benign tumors (e.g. meningioma) that can kill
-## OCD increasing with time/aging could be CML deaths caused by restricting TKI to IM at old ages
-
-Dt|>filter(cause%in%c("LC"))|>
-  ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
-  gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx
-ggsave(file=paste0("LExtra/outs/7_LC.pdf"),height=3,width=3)
-
+# 
+# Dt|>filter(cause%in%c("BEN","OCD"))|>
+#   ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
+#   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx +ccE
+# ggsave(file=paste0("LExtra/outs/7_BEN-OCD+.pdf"),height=3,width=3) # obs includes 252 = no DC
+# # ggsave(file=paste0("LExtra/outs/7_BEN-OCD.pdf"),height=3,width=3) # obs is strictly OCD
+# ## BEN looks like coincidental CML brought about via benign tumors (e.g. meningioma) that can kill
+# ## OCD increasing with time/aging could be CML deaths caused by restricting TKI to IM at old ages
+# 
+# Dt|>filter(cause%in%c("LC"))|>
+#   ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+ghE+geEAR+geom_point(size=2)+geom_line()+
+#   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+gh0 + leg + gx
+# ggsave(file=paste0("LExtra/outs/7_LC.pdf"),height=3,width=3)
+# 
