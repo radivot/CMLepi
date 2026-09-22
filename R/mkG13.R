@@ -1,11 +1,11 @@
-#' Makes Generalized Additive Model for 14 cause of death groups
+#' Makes generalized additive models for causes of death that were aggregated into 13 groups
 #'
 #'
 #'
 #' @param seerHome folder name.
 #' @param inFile input file.
 #' @param outFile output file.
-#' @returns Nothing is returned. Run for the side effect of creating a list of 12 gam fits in the output file.
+#' @returns Nothing is returned. Run for the side effect of creating a list of gam fits in the output file.
 #' @importFrom dplyr mutate rename filter select relocate last_col summarize group_by
 #' @importFrom forcats as_factor
 #' @importFrom mgcv gam
