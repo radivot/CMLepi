@@ -65,7 +65,7 @@ mkG13<-function(seerHome="~/data/CMLepi",
 #   87   0.554  #IN  HIV
 #   88   1.34   #IN  sepsis
 #   89   0.703  #IN  parasites
-  (dIN=d|>filter(COD%in%c(85:89,98,110))|>mutate(COD="IN")) #INfections TB, syph, hiv, septicemia, parasites 98=flu, 110=covid
+  (dIN=d|>filter(COD%in%c(85:89,98))|>mutate(COD="IN")) #INfections TB, syph, hiv, septicemia, parasites 98=flu
   (L[["IN"]]=dIN|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop")) # 21k => 3k
   tits["IN"]="Infection"
 #   90   3.12 #DK  Diabetes Mellitus
@@ -109,9 +109,9 @@ mkG13<-function(seerHome="~/data/CMLepi",
   dASH=d|>filter(COD%in%c(107:109))|>mutate(COD="ASH") #accidents, suicides and homocides
   (L[["ASH"]]=dASH|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["ASH"]="Accidents, Suicides and Homocides"
-#  110   1.04  #IN  covid
+#  110   1.04  #OCD  covid
 #  111  14.7   #OCD Other Cause of Death (i.e. could include zoom out of CML)
-  dOCD=d|>filter(COD==111)|>mutate(COD="OCD")
+  dOCD=d|>filter(COD%in%c(100,111))|>mutate(COD="OCD")
   (L[["OCD"]]=dOCD|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["OCD"]="Other Cause of Death"
   (nms=names(L))
