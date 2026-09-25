@@ -111,7 +111,7 @@ mkG13<-function(seerHome="~/data/CMLepi",
   tits["ASH"]="Accidents, Suicides and Homocides"
 #  110   1.04  #OCD  covid
 #  111  14.7   #OCD Other Cause of Death (i.e. could include zoom out of CML)
-  dOCD=d|>filter(COD%in%c(100,111))|>mutate(COD="OCD")
+  dOCD=d|>filter(COD%in%c(110,111))|>mutate(COD="OCD")
   (L[["OCD"]]=dOCD|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["OCD"]="Other Cause of Death"
   (nms=names(L))
