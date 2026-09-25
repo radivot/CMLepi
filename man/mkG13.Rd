@@ -2,7 +2,7 @@
 % Please edit documentation in R/mkG13.R
 \name{mkG13}
 \alias{mkG13}
-\title{Makes Generalized Additive Model for 14 cause of death groups}
+\title{Makes generalized additive models for causes of death that were aggregated into 13 groups}
 \usage{
 mkG13(
   seerHome = "~/data/CMLepi",
@@ -18,8 +18,8 @@ mkG13(
 \item{outFile}{output file.}
 }
 \value{
-Nothing is returned. Run for the side effect of creating a list of 12 gam fits in the output file.
+Nothing is returned. Run for the side effect of creating a list of gam fits in the output file.
 }
 \description{
-Makes Generalized Additive Model for 14 cause of death groups
+Makes generalized additive models for causes of death that were aggregated into 13 groups
 }
