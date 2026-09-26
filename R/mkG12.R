@@ -124,11 +124,12 @@ mkG12<-function(seerHome="~/data/CMLepi",
     D$is_2020 <- as.numeric(D$year == 2020)
     D$is_2021 <- as.numeric(D$year == 2021)
     D$is_2022 <- as.numeric(D$year == 2022)
-    D$is_2023 <- as.numeric(D$year == 2023)
     # (Df=D|>filter(year<2020)) # data for fitting  # comment, now using all years, letting
+    L[[i]]=D  #store back in L what we actually used in the fit for viewing of fit later
     print(summary(G[[i]]<-mgcv::gam(num ~ sex+s(age,year,by=sex)+ti(age,year)+
-                    s(age, by = is_2020, bs = "cr") + s(age, by = is_2021, bs = "cr") + # age-specific extra
-                    s(age, by = is_2022, bs = "cr") + s(age, by = is_2023, bs = "cr") + # for each covid year
+                    s(age, by = is_2020, bs = "cr") +
+                    s(age, by = is_2021, bs = "cr") + # age-specific extra
+                    s(age, by = is_2022, bs = "cr") + # for each covid year
                     offset(log(denom)),family=poisson(),data=D)))
   }
   save(G,L,tits,file=file.path(seerHome,outFile))
