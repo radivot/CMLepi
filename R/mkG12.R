@@ -1,6 +1,7 @@
-#' Makes generalized additive models for causes of death that were aggregated into 13 groups
+#' Makes generalized additive models for causes of death that were aggregated into 12 groups
 #'
-#' Deprecated: Use mkG12 instead
+#'
+#' Gives each covid year a separate fit across ages.
 #'
 #' @param seerHome folder name.
 #' @param inFile input file.
@@ -11,13 +12,13 @@
 #' @importFrom mgcv gam
 #' @importFrom stats poisson
 #' @export
-mkG13<-function(seerHome="~/data/CMLepi",
+mkG12<-function(seerHome="~/data/CMLepi",
                inFile="seerMrt.RData",
-               outFile="G13.RData"){
+               outFile="G12.RData"){
   # # Use mkSEERmrt() to make inFile
   # seerHome="~/data/CMLepi"
   # inFile="seerMrt.RData"
-  # outFile="G13.RData"
+  # outFile="G12.RData"
   # require(dplyr)
   # require(forcats)
   # require(mgcv)
@@ -88,15 +89,12 @@ mkG13<-function(seerHome="~/data/CMLepi",
   (L[["COPD"]]=dCOPD|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["COPD"]="COPD"
 #  100   0.238  #MSPC   stomach ulcers
-#  101   1.61   #LIV   liver disease
-  dLIV=d|>filter(COD==101)|>mutate(COD="LIV")
-  (L[["LIV"]]=dLIV|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
-  tits["LIV"]="LIVer disease"
+#  101   1.61   #MSPC   liver disease
 #  102   1.72   #DK    kidney disease
 #  103   0.025  #MSPC   Complications of birth
 #  104   0.568  #MSPC   congenital conditions
 #  105   0.77   #MSPC   perinatl condiditions
-  dMSPC=d|>filter(COD%in%c(91,100,103:105))|>mutate(COD="MSPC")
+  dMSPC=d|>filter(COD%in%c(91,100:101,103:105))|>mutate(COD="MSPC")
   (L[["MSPC"]]=dMSPC|>group_by(COD,year,age,sex,denom)|>summarize(num=sum(num),.groups="drop"))
   tits["MSPC"]="Miscellaneous SPecific Causes"
 #  106   1.56   #ILL   ill defined (i.e. could include zoom out of CML)
@@ -121,15 +119,22 @@ mkG13<-function(seerHome="~/data/CMLepi",
     # i="LC"
     print(i)
     D=L[[i]]
-    (D=D|>filter(age>20))
+    (D=D|>filter(age>20,sex!="Both"))  # also remove sex="Both" in G12
     D$sex=as_factor(D$sex)
-    (Df=D|>filter(year<2020)) # data for fitting
-    print(summary(G[[i]]<-mgcv::gam(num ~ sex+s(age,year,by=sex)+ti(age,year)+offset(log(denom)),family=poisson(),data=Df)))
+    D$is_2020 <- as.numeric(D$year == 2020)
+    D$is_2021 <- as.numeric(D$year == 2021)
+    D$is_2022 <- as.numeric(D$year == 2022)
+    D$is_2023 <- as.numeric(D$year == 2023)
+    # (Df=D|>filter(year<2020)) # data for fitting  # comment, now using all years, letting
+    print(summary(G[[i]]<-mgcv::gam(num ~ sex+s(age,year,by=sex)+ti(age,year)+
+                    s(age, by = is_2020, bs = "cr") + s(age, by = is_2021, bs = "cr") + # age-specific extra
+                    s(age, by = is_2022, bs = "cr") + s(age, by = is_2023, bs = "cr") + # for each covid year
+                    offset(log(denom)),family=poisson(),data=D)))
   }
   save(G,L,tits,file=file.path(seerHome,outFile))
 }
 
-# WARNING: the 13 Mortality Data based COD groups defined above need to be synced up with 13 incidence data COD13 defs
+# WARNING: the 12 Mortality Data based COD groups defined above need to be synced up with 12 incidence data COD12 defs
 
 # US mort defs
 #  0 = "All Causes of Death"
