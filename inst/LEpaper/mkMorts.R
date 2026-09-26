@@ -36,6 +36,7 @@ save(d,file="~/data/CMLepi/seerMrt.RData") # 336,000 × 10
 if(0) { # switch to 1 if you need to run these to make G*.RData files ... they take 80 secs
   system.time(SEERaBomb::mkG2(seerHome="~/data/CMLepi"))#30s so comment after run. Puts .RData files Glc, Goc and Gac in ~/data/CMLepi
   system.time(SEERaBomb::mkG6(seerHome="~/data/CMLepi"))#50s. Puts G6.RData in ~/data/CMLepi 
+  system.time(CMLepi::mkG12())#100s. Puts G12.RData in ~/data/CMLepi 
 }
 # G6.RData is used by Figure 7CD. Gac.RData is used by Figures 3. 
 

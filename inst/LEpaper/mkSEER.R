@@ -1,4 +1,4 @@
-# mkSEERincid.R  (name of this R script)
+# mkSEER.R  (name of this R script)
 library(tidyverse)
 library(CMLepi)
 # system.time({
@@ -6,8 +6,8 @@ library(CMLepi)
 #   save(d8,file="~/data/CMLepi/cml8.RData")
 #   d12=seer2r("cml12")
 #   save(d12,file="~/data/CMLepi/cml12.RData")
-#   d20=seer2r("cml20") 
-#   save(d20,file="~/data/CMLepi/cml20.RData") 
+#   d20=seer2r("cml20")
+#   save(d20,file="~/data/CMLepi/cml20.RData")
 # })  # 10 secs, so comment out
 load("~/data/CMLepi/cml8.RData")
 load("~/data/CMLepi/cml12.RData") 
