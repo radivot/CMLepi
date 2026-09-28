@@ -54,22 +54,28 @@ table(dOld$status)# 91 alive, 1204 dead
 table(dOld$COD2) #635 by LC, 569 by OC
 dOldOC=dOld|>filter(COD2=="OC")
 sort(table(dOldOC$CODS)) # heart=223, cerebroVasc=25, athero=11 => 223+25+11=259 in text
-table(dOld$COD7) #263 by CVD (3 more via hypertension + 1 via aortic aneurism)
+table(dOld$COD12) #263 by CV (3 more via hypertension + 1 via aortic aneurism)
 table(dOld$status,dOld$yrdx) # tells us to take it up thru 2017 to have most cases dead
-dOld=dOld|>filter(surv<80) # 1159 => lost 136 to survival unknown
-dOld=dOld|>filter(surv>0) # 1135  => lost 24 more to survival = 0
+# dOld=dOld|>filter(surv<80) # 1159 => lost 136 to survival unknown
+# dOld=dOld|>filter(surv>0) # 1135  => lost 24 more to survival = 0
+dOld=dOld|>mutate(surv=ifelse(surv>80,0.001,surv))
+dOld=dOld|>mutate(surv=ifelse(surv==0,0.001,surv))
 dOld|>group_by(yrdx)|>summarize(mn=mean(surv))|>t() # and 2017 is where LE peaks before censoring brings it back down
 dOld=dOld|>filter(yrdx<=2017)
-table(dOld$status) # 870 dead, 8 still alive
+table(dOld$status) #988 dead, 8 still alive ... was 870 dead, 8 still alive
 (dOld=dOld|>mutate(yrG=cut(yrdx,breaks=c(1975,1990,2000,2005,2011,2017),include.lowest=T,dig.lab=4)))
 dOld|>group_by(yrG)|>summarize(mn=mean(surv),sd=sd(surv)) 
 summary(lm(surv~yrdx,data=dOld))
 summary(lmG<-lm(surv~0+yrG,data=dOld))
 (ci=round(cbind(coef(lmG),confint(lmG)),2))
 paste0(ci[,1]," (",ci[,2],", ",ci[,3],")",collapse=", ")
+# "0.98 (0.64, 1.31), 0.79 (0.5, 1.08), 0.86 (0.62, 1.11), 1.15 (0.93, 1.37), 1.6 (1.4, 1.8)"
+0.86/3.8 #23%
+1.6/4.0 #40%
+# Was all this when S=0 and S=NA were excluded from agedx==90. Using S=0.001 instead shortens LEs
 # "1.02 (0.67, 1.38), 0.92 (0.6, 1.24), 1 (0.73, 1.27), 1.32 (1.08, 1.57), 1.81 (1.58, 2.03)"
-1/3.8 #26%
-1.81/4.0 #45%
+# 1/3.8 #26%
+# 1.81/4.0 #45%
 
 d20
 # # A tibble: 45,636 × 13
@@ -98,13 +104,18 @@ table(d20$CODS=="Other Lymphocytic Leukemia") # 19 OLL
 1117+772+8+220+134+488+226+19 # 2984
 488+226+19 #733 by OL
 1117+780+220+134+733#2984 = sum of subleu=1117,AML=780,CLL=220,ALL=134,OL=733
-
+# 2984 deaths by other leukemias is way too high relative to  
+table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
+#the following also seem high. Make me wonder if zooming out to other leukemias didn't continue to higher levels
 table(d20$CODS=="In situ, benign or unknown behavior neoplasm") # 455
 table(d20$CODS=="Miscellaneous Malignant Cancer") # 312
 table(d20$CODS=="Other Cause of Death") # 1806 
-table(d20$CODS=="Lung and Bronchus")# 351 lung cancer deaths
 
 8194*2.4# 19665.6 US CML patient deaths by a leukemia in 2000-2023 among those Diagnosed in 2000-2023
-# to put this in perspective, 2984 deaths by other leukemias is way too high relative to  
 
+# these final calcs also exist in mkSEER.R.  They are now also in here since they follow next in the text 
+dc=d8|>filter(yrdx<2000)
+(dc=dc|>mutate(year=yrdx+surv,status=ifelse(year>2000,0,1)))
+table(dc$status) # 1206 alive; 12*1206 = 14472 is prevalence of cases alive entering 2000 
+table(d8$status) # 5500 alive, 9419 dead;12*5500 = 66000 is prevalence on dec31 2023
 

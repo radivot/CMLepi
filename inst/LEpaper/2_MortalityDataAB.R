@@ -34,9 +34,9 @@ ggsave("LE/outs/2B_deathAges.pdf",width=3,height=3)
 ggsave("LE/outs/2B_deathAges.png",width=3,height=3)  
 ## Compare death counts in 2000-2023 nationwide to those estimated via SEER incidence COD info.
 d|>filter(year%in%c(2000:2023))|>summarize(n=sum(count)) #total of 28085 deaths by CML in 2000-2023
-5210*2.4# 12.5k by CML with Dx in 2000-2023 + 14.5k alive in 2000 implies an upper limit of 27k dead by CML. 
+8194*2.4# 19.66k by CML with Dx in 2000-2023 + 14.5k alive in 2000 implies an upper limit of 34k dead by CML. 
 # 19.5k + 14.5k = 34k is at least greater than 28k, so Mortality data likely fixed the problem of missclassifications  
 # of deaths as by other leukemias in the Incidence Data. It likely also does a better job of picking up
-# deaths by intense therapy of intense disease, as 8.5k deaths by CML out of 14.5k alive in 2000 still seems high.  
+# deaths by intense therapy of intense disease, as 8.5k (28-19.5) deaths by CML out of 14.5k alive in 2000 still seems high.  
 # Unclear is if the 28k deaths include any via higher rates of CVD deaths caused by chronic use of tyrosine kinase inhibitors. 
 

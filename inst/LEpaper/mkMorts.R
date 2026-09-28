@@ -38,7 +38,6 @@ if(0) { # switch to 1 if you need to run these to make G*.RData files ... they t
   system.time(SEERaBomb::mkG6(seerHome="~/data/CMLepi"))#50s. Puts G6.RData in ~/data/CMLepi 
   system.time(CMLepi::mkG12())#100s. Puts G12.RData in ~/data/CMLepi 
 }
-# G6.RData is used by Figure 7CD. Gac.RData is used by Figures 3. 
 
 # also do this block once a year for ageDx specific LT estimates of LEs in 
 files=c("Deaths_1x1.txt", "Exposures_1x1.txt", "Population.txt", "Mx_1x1.txt")
