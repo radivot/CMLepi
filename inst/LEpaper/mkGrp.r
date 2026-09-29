@@ -16,11 +16,12 @@ d0|>filter(surv==0) #224 × 12
 dKK|>filter(surv>80) #416 × 12
 dKK|>filter(surv==0) #203 × 12
 dKK=dKK|>mutate(agedx=agedx+0.5,yrdx=yrdx+0.5) # keep in mind that doing this pushes some people's surv times into 2024.  
-i="KK"
+sum(dKK$status) # 17754 deaths
 i="KKold"  # keep everything
 i="EE"
 i="DIFF"
 i="OLD"
+i="KK"
 if (i=="EE") # exlude both
   (d=dKK|>filter(surv<80,surv>0)) #43932
 if (i=="KK") {
@@ -55,6 +56,7 @@ if (i=="KKold") {
 (Day=Day|>mutate(tstart = astart-adx, tstop  = astop-adx,.before=status)) ## and bring in tstart and tstop
 (Dayt=survSplit(Surv(tstart,tstop,COD12)~.,Day,cut=1:24,episode="Time")|>tibble()|>relocate(tstart:COD12,.before=COD)) 
 (Dayt=Dayt|>mutate(t=Time-1,age=floor(astart),year=floor(ystart),PY=tstop-tstart,.before=COD)|>select(-Time))
+
 (Dayt=Dayt|>mutate(ASH=ifelse(COD12=="ASH",1,0),.before=COD))
 (Dayt=Dayt|>mutate(BEN=ifelse(COD12=="BEN",1,0),.before=COD))
 (Dayt=Dayt|>mutate(CA=ifelse(COD12=="CA",1,0),.before=COD))
@@ -133,4 +135,13 @@ D=D|>mutate(num=OCD)
 D$Eocd=as.numeric(exp(predict(G[["OCD"]],D)))
 D=D|>select(-denom,-num)
 D=D|>select(-is_2020,-is_2021,-is_2022)
-save(D,file=paste0("~/data/CMLepi/grp_",i,".RData")) 
+load("~/data/mrt/us_mort.RData") 
+(m<-us_mort |>filter(Sex != "Total", Year > 1974)|>select(year=Year,age=Age,sex=Sex,m=Mortality) ) 
+(D=left_join(D,m))
+D=D|>mutate(O=ASH+BEN+CA+COPD+CV+DK+ILL+IN+LC+MCA+MSPC+OCD,E=m*PY) # all cause mortality
+save(D,file=paste0("~/data/CMLepi/grp_",i,".RData"))
+D|>select(ASH:OCD,O)|>colSums()
+  # ASH   BEN    CA  COPD    CV    DK   ILL    IN    LC   MCA  MSPC   OCD     O 
+  # 472   432  1359   502  3390   634   105   585  7610   302   296  1982 17669 
+# 17669  is close to 17754 deaths at top. 17754-17669= 85 deaths missing
+D12|>filter(age<=20)|>select(ASH:OCD)|>colSums()|>sum() # yes, 85 young deaths cut out
