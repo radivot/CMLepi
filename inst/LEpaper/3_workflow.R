@@ -1,52 +1,15 @@
 ## 3_workflow.R
 graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)
-# library(SEERaBomb) #call funcs with ::
 library(mgcv)
 options(rgl.useNULL = TRUE)
 options(rgl.printRglwidget = TRUE)
 # library(rgl)  #call funcs with ::
-load("~/data/CMLepi/cml.RData") #made in mkSEER.R
-d20=d|>filter(yrdx>=2000)
-d20|>filter(agedx<90) #44,551 cases with known ages are used to form the grouped data
-d20|>filter(agedx<90,surv>0) # 44,348  => 261 with surv=0 bumped up to surv=0.01 in grouped data
-d20|>filter(agedx<90,surv>0,surv<80) # 43,932 => 348+68 = 416 diagnosed on death certificate, set surv=5 on these 
-
-(d=d20|>filter(agedx<90)) #44,551
-d=d|>mutate(agedx=agedx+0.5)
-d=d|>mutate(surv=ifelse(surv>80,5,surv)) #set NA surv to 5 years (no care)
-d=d|>mutate(surv=ifelse(surv==0,0.01,surv)) #set  0 surv to 0.01 (else survSplit throws 'zero' parameter must be less than any observed times)
-
-load("~/data/CMLepi/Gac.RData") #made in mkMorts.R
-Sex="Male"
-(d=d|>filter(sex==Sex)) #25,320
-
-head(PYin<-d|>mutate(py=surv,age=agedx,year=yrdx)|>select(py,age,year))
-head(PYin<-as.matrix(PYin))
-yrs=1975:2023
-ages=0.5:125.5
-Z=matrix(0,ncol=length(yrs),nrow=length(ages))
-colnames(Z)=yrs
-rownames(Z)=ages
-head(Z)# all zeros initially
-PY=Z+0 # add 0 to make sure not a lazy copy of just the pointer 
-SEERaBomb::fillPYM(PYin, PY)
-(d=d|>mutate(lc=ifelse(COD2!="alive",1,0)))
-N=1e4 ## shrink by N big then multiply by it later, so each PY of 1 lands in one bin
-head(Od<-d|>mutate(py=lc/N,age=agedx+surv,year=yrdx+surv)|>select(py,age,year)) 
-head(Oin<-as.matrix(Od))
-O=Z+0
-SEERaBomb::fillPYM(Oin, O)
-O=O*N
-head(dO<-reshape2:::melt(O,value.name="Obs"))
-head(dP<-reshape2:::melt(PY,value.name="PY"))
-head(dd<-left_join(dO,dP))
-names(dd)[1:2]<-c("age","year")
-(D=dd|>filter(PY>0))
-D$sex=Sex
-D=D|>mutate(denom=PY,num=Obs)
-D=D|>filter(age<90,age>20)
-D$Eus=exp(predict(Gac,D))  # Gac based on US rate
+load("~/data/CMLepi/grp_KK.RData")
+(D=D|>select(age,year,t,sex,PY,O,E,m)|>filter(sex=="Male"))
+D=D|>group_by(age,year,sex,m)|>summarize(O=sum(O),E=sum(E),PY=sum(PY))|>  
+ mutate(EAR=(O-E)/PY,LL=EAR-1.96*sqrt(O)/PY,UL=EAR+1.96*sqrt(O)/PY)|>ungroup() 
+D
 
 # Using rgl package, get it in  plot tab, rotate view, and save as png
 with(D,rgl::plot3d(age,year,PY,xlab="",ylab="",zlab="",alpha=1,type="p"))
@@ -74,6 +37,7 @@ cc1=coord_cartesian(ylim=c(0.015,NA))
 Drr|>ggplot(aes(x=year,y=EAR,col=yG))+geE+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
   geom_line(aes(y=fit),data=pD)+cc1+
   scale_y_log10(breaks=EARbrks)+tc(13)+ghp2+ghp03+ylab("Excess Absolute Risk of Death")+leg+labs(x="Year",color="Data through")
+
 ggsave(file="LE/outs/3_workflowEARm.pdf",height=3,width=3) # EAR for males
 # ggsave(file="LE/outs/3_workflowEAR.pdf",height=3,width=3) # EAR
 # 
