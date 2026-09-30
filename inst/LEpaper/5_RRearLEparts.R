@@ -10,7 +10,7 @@ load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
 (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551 (bigger now by 619 cases)
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
-d20=d20|>select(yrdx,agedx,sex,surv,status) # 43,932 CML cases
+d20=d20|>select(yrdx,agedx,sex,surv,status) 
 
 ####  A and B use all ages, so d20 is used in the line below 
 (D=SEERaBomb::msd(d20,mrt,brkst=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)))

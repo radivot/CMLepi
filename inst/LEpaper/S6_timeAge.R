@@ -2,8 +2,10 @@
 graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
-(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
-d=d20|>select(yrdx,agedx,sex,surv,status) # 43,932 CML cases
+(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
+d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
+d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
+d=d20|>select(yrdx,agedx,sex,surv,status) 
 (ages=seq(40,90,10))
 leg=theme(legend.margin=margin(0,0,0,0),legend.position="top",legend.text=element_text(size=12))
 gx=xlab("Years Since Dx")

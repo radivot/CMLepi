@@ -6,8 +6,10 @@ library(tsibble)
 load("~/data/mrt/us_mort.RData") #us_mort is a class vital object (single tibble-like)  
 load("~/data/mrt/mrtUSA.RData")#mrt is list of 3 matrices
 load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
-(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
-d20=d20|>select(yrdx,agedx,sex,surv,status) # 43,932 CML cases
+(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
+d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
+d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
+d=d20|>select(yrdx,agedx,sex,surv,status) 
 
 dt=d20|>filter(agedx>=80,agedx<90) #4.7k
 (D=SEERaBomb::msd(dt,mrt,brkst=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)))
@@ -26,7 +28,7 @@ ccEAR=coord_cartesian(ylim=c(0,0.4))
 txt="Age at Dx in 80-89"
 ghp1=geom_hline(yintercept=0.1,col="gray")
 
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+#ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_85.pdf",width=2.5,height=3)
@@ -34,13 +36,13 @@ ggsave("LE/outs/6A_85.pdf",width=2.5,height=3)
 Vit=Vit|>filter(Age>84)
 (n85=Vit|>life_table()|>filter(Age==85)) # 6.91 years
 vit=Vit|>mutate(Mortality=0.1+Mortality)
-vit|>life_table()|>filter(Age==85) #4.5 years 
+vit|>life_table()|>filter(Age==85) #4.5 years => 2.4 lost to persistence
 dD=D|>filter(t<5)
 (lenV=length(vit$Mortality)) #26 long
 (lenD=length(dD$EAR)) #5 long, so add 21
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.1,21)) 
-(v85=vit|>life_table()|>filter(Age==85)) # 3.32 years so 6.91-3.32 = 3.6 are missing, 2.4 ss, 1.2 transients
+(v85=vit|>life_table()|>filter(Age==85)) # 3.11 years so 6.91-3.11 = 3.8 are missing, 2.4 ss, 1.4 transients
 
 txt="Age at Dx in 70-79"
 ccEAR=coord_cartesian(ylim=c(0,0.2))
@@ -65,7 +67,7 @@ dD=D|>filter(t<15)
 (lenD=length(dD$EAR)) #15 long, so add 21
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.1,21)) 
-(v75=vit|>life_table()|>filter(Age==75)) # 7 years so 12.6-7 = 5.6 are missing 
+(v75=vit|>life_table()|>filter(Age==75)) # 6.8 years so 12.6-6.8 = 5.8 are missing 
 
 txt="Age at Dx in 60-69"
 ccEAR=coord_cartesian(ylim=c(0,0.1))
@@ -75,7 +77,7 @@ dt=d20|>filter(agedx>=60,agedx<70) #7.7k
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:45,EAR=c(0.05+(0.05/10)*(0:10),rep(0.1,20))))
-D%>%ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_65.pdf",width=4.5,height=3)
@@ -89,7 +91,7 @@ dD=D|>filter(t<15)
 (lenD=length(dD$EAR)) #15 long, so add 31
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
-(v65=vit|>life_table()|>filter(Age==65)) # 12.6 years so 19.8-12.6 = 7.2 are missing 
+(v65=vit|>life_table()|>filter(Age==65)) # 12.5 years so 19.8-12.5 = 7.3 are missing 
 
 txt="Age at Dx in 50-59"
 dt=d20|>filter(agedx>=50,agedx<60) #8.2k
@@ -114,7 +116,7 @@ length(dD$EAR) #15 long, so add 31
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
 (LT55=vit|>life_table())
-(v55=LT55|>filter(Age==55)) # 19.3 years so 27.8-19.3 = 8.5 are missing 
+(v55=LT55|>filter(Age==55)) # 19.2 years so 27.8-19.2 = 8.6 are missing 
 
 txt="Age at Dx in 40-49"
 dt=d20|>filter(agedx>=40,agedx<50) #8.2k
@@ -138,7 +140,7 @@ length(vit$Mortality) #66 long
 length(dD$EAR) #15 long, so add 31
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
-(v45=vit|>life_table()|>filter(Age==45)) # 25.9 years so 36.6-25.9 = 10.7 are missing 
+(v45=vit|>life_table()|>filter(Age==45)) # 25.8 years so 36.6-25.8 = 10.8 are missing 
 paste0("Normal LE=",n45["ex"],", CML LE=",v45["ex"],", Loss=",n45["ex"]-v45["ex"])
 (v=bind_rows(v45,v55,v65,v75,v85))
 (n=bind_rows(n45,n55,n65,n75,n85))
