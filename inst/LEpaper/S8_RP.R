@@ -1,9 +1,11 @@
-# Figure 7A RP fit
+# Figure S8 RP fit
 graphics.off();rm(list=ls())#clear plots and environment 
 library(flexsurv) 
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData") 
-(d=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
+(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
+d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
+d=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
 range(d$agedx) # 90 is 90+
 agedxUL=64  # not too old so we can get out past 10 years
 agedxLL=54  # all above 65 so transplants not an issue
@@ -25,7 +27,7 @@ d=d|>mutate(a=as.character(round(agedx+surv)))
 d=d|>mutate(y=as.character(round(yrdx+surv)))
 getMort=function(s,a,y) mrt[[s]][a,y]
 d$h=mapply(getMort,d$s,d$a,d$y)
-load("~/data/mrt/hBack.RData")  # made in S7_mkhBack.R
+load("~/data/CMLepi/hBack.RData")  # made in S8_mkhBack.R
 (D$y=approx(x=hb$time,y=hb$hazard,xout=D$t)$y)
 D=D|>mutate(LLy=LL+y,ULy=UL+y,EARy=EAR+y)
 # cc1=coord_cartesian(xlim=c(0,22),ylim=c(0,0.25))
@@ -40,10 +42,10 @@ gp=geom_point()
 ghp03=geom_hline(yintercept=c(0.03),col="gray")
 gh0=geom_hline(yintercept=0)
 tc=function(sz) theme_classic(base_size=sz)
-cc1=coord_cartesian(ylim=c(0.0,NA))
+cc1=coord_cartesian(ylim=c(0.0,0.13),xlim=c(0,25))
 leg=theme(legend.margin=margin(0,0,0,0),
           legend.position= c(0.7, 0.85),legend.text=element_text(size=12))
-D|>ggplot(aes(x=t,y=EARy))+gp+gx+gyE+gh0+ghp03+tc(13)+leg+
+D|>ggplot(aes(x=t,y=EARy))+gp+gx+gyE+gh0+tc(13)+leg+
   geom_ribbon(aes(x=time,y=h,ymin=LL, ymax=UL), data=h,alpha=0.2, colour=NA) +
   geom_line(aes(x=time,y=h), data=h) +
   geom_step(aes(x=time,y=hazard),data=hb)+
@@ -51,4 +53,4 @@ D|>ggplot(aes(x=t,y=EARy))+gp+gx+gyE+gh0+ghp03+tc(13)+leg+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   geom_errorbar(aes(x=t,y=EARy,ymin=LLy,ymax=ULy),data=D,width=0.2)+ #tc(13)+
   geom_vline(xintercept = exp(fsp$aux$knots), col="gray80", lty=2) + cc1
-ggsave("LE/outs/supp/S7_RP.pdf",width=3.5,height=3.5)  
+ggsave("LE/outs/supp/S8_RP.pdf",width=3.5,height=3.5)  
