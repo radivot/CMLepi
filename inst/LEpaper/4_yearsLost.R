@@ -32,8 +32,8 @@ library(tsibble)
 files=c("Deaths_1x1.txt", "Exposures_1x1.txt", "Population.txt", "Mx_1x1.txt")
 files=paste0("~/data/hmd_countries/USA/stats/",files) #put files above from HMD into here
 us_mort=read_hmd_files(files) # function in R package vital
-# save(us_mort,file="~/data/mrt/us_mort.RData")
-# load("~/data/mrt/us_mort.RData")
+# save(us_mort,file="~/data/mrt/us_mort.RData") # save to replace 3 lines above with one below
+# load("~/data/mrt/us_mort.RData")              # when we need to do this again
 (D=us_mort |>filter(Sex == "Total", Year >= 1992)|>life_table()|>filter(Age==59))
 gh=geom_hline(yintercept=24.5,col="gray")
 gv=geom_vline(xintercept=c(2019,2024),col="gray")
@@ -45,7 +45,8 @@ ggsave("LE/outs/4B_normalLEs.pdf",width=3,height=2)
 ggsave("LE/outs/4B_normalLEs.png",width=3,height=2)
 
 head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
-d=d|>mutate(surv=ifelse(surv>50,0,surv)) 
+d=d|>mutate(surv=ifelse(surv>80,0.001,surv)) # stick with >80 for identifying S=NA cases
+d=d|>mutate(surv=ifelse(surv==0,0.001,surv)) # could leave these at 0 here, but to be consistent
 table(d$histo3,d$yrdx)
 d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) # >50 deaths by 9875 after year 2000
 (Dt=d|>mutate(ageDth=surv+agedx)) 
