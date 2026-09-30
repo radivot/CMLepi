@@ -6,7 +6,10 @@ library(tsibble)
 load("~/data/mrt/us_mort.RData") #us_mort is a class vital object (single tibble-like)  
 load("~/data/mrt/mrtUSA.RData")#mrt is list of 3 matrices
 load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
-(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
+# (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
+(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551 (bigger now by 619 cases)
+d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
+d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
 d20=d20|>select(yrdx,agedx,sex,surv,status) # 43,932 CML cases
 
 ####  A and B use all ages, so d20 is used in the line below 
@@ -52,10 +55,10 @@ vit=Vit
 (lenV=length(vit$Mortality)) #52 long
 (lenD=length(D$EAR)) #22 long, so add 30 zeros
 vit$Mortality=vit$Mortality*c(D$RR,rep(1.8,30))
-vit|>life_table()|>filter(Age==59) # 17.5 years so 6.9 are missing! 5 from ss and 1.9 from transients
+vit|>life_table()|>filter(Age==59) # 17.4 years so 7.1 are missing! 5 from ss and 2.1 from transients
 vit=Vit
 vit$Mortality=vit$Mortality+c(D$EAR,rep(0.017,30))
-vit|>life_table()|>filter(Age==59) # 16.3 years so 8.2 are missing! 5.1 from ss and 3.1 from transients
+vit|>life_table()|>filter(Age==59) # 16.1 years so 8.4 are missing! 5.1 from ss and 3.3 from transients
 
 ###########  C and D
 d59=d20|>filter(agedx>=54,agedx<=64) #9k
@@ -83,14 +86,14 @@ vit|>life_table()|>filter(Age==59) # 19.5 years   5 lost to steady state, as in 
 (lenD=length(D$EAR)) #22 long, so add 30 zero
 vit=Vit
 vit$Mortality=vit$Mortality*c(D$RR,rep(1.8,30))
-vit|>life_table()|>filter(Age==59) # 17.0 years so 7.5 are missing! 5 from ss and 2.5 from transients
+vit|>life_table()|>filter(Age==59) # 16.9 years so 7.6 are missing! 5 from ss and 2.6 from transients
 vit=Vit  #5D
 vit=vit|>mutate(Mortality=0.017+Mortality)
 vit|>life_table()|>filter(Age==59) # 19.4 years  5.1 lost to steady state, as in 5B
 vit=Vit  #reset vit to Vit
 vit$Mortality=vit$Mortality+c(D$EAR,0.05+0.03/5*(1:30))
-vit|>life_table()|>filter(Age==59) # 16.3 years so 8.2 are missing! 5.1 from ss and 3.1 from transients
+vit|>life_table()|>filter(Age==59) # 16.2 years so 8.3 are missing! 5.1 from ss and 3.2 from transients
 vit=Vit
 vit$Mortality=vit$Mortality+c(D$EAR,c(0.05+(0.05/9)*1:9,rep(0.10,21)))
-vit|>life_table()|>filter(Age==59) # same answer if cap at 0.10 at ages over 90
+vit|>life_table()|>filter(Age==59) # 16.3 if cap at 0.10 at ages over 90
 
