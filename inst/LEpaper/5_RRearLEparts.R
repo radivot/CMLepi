@@ -1,18 +1,18 @@
 ## 5_RRearLEparts.R
-graphics.off();rm(list=ls())#clear plots and environment 
+graphics.off();rm(list=ls())#clear plots and environment
 library(tidyverse)
-library(vital)  
+library(vital)
 library(tsibble)
-load("~/data/mrt/us_mort.RData") #us_mort is a class vital object (single tibble-like)  
+load("~/data/mrt/us_mort.RData") #us_mort is a class vital object (single tibble-like)
 load("~/data/mrt/mrtUSA.RData")#mrt is list of 3 matrices
 load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
 # (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90,surv<80,surv>0)) #43932
 (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551 (bigger now by 619 cases)
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
-d20=d20|>select(yrdx,agedx,sex,surv,status) 
+d20=d20|>select(yrdx,agedx,sex,surv,status)
 
-####  A and B use all ages, so d20 is used in the line below 
+####  A and B use all ages, so d20 is used in the line below
 (D=SEERaBomb::msd(d20,mrt,brkst=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)))
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
@@ -95,5 +95,5 @@ vit$Mortality=vit$Mortality+c(D$EAR,0.05+0.03/5*(1:30))
 vit|>life_table()|>filter(Age==59) # 16.2 years so 8.3 are missing! 5.1 from ss and 3.2 from transients
 vit=Vit
 vit$Mortality=vit$Mortality+c(D$EAR,c(0.05+(0.05/9)*1:9,rep(0.10,21)))
-vit|>life_table()|>filter(Age==59) # 16.3 if cap at 0.10 at ages over 90
+vit|>life_table()|>filter(Age==59) # 16.3 if cap at 0.10 at ages over 90 => 8.2 missing, 5.1 ss, 3.1 transients
 

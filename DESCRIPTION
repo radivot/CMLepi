@@ -1,5 +1,5 @@
 Package: CMLepi
-Title: CML Epidemiology
+Title: SEER CML Data Analyses in R
 Version: 0.0.1
 Authors@R: 
     person("Tomas", "Radivoyevitch", , "radivot@gmail.com", role = c("aut", "cre"),
