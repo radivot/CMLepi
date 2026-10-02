@@ -24,11 +24,11 @@ gyE=ylab("Excess Absolute Risk of Death")
 tc=function(sz) theme_classic(base_size=sz)
 geE=geom_errorbar(aes(ymin=LL,ymax=UL),width=0.2)#for absolute risks
 gh0=geom_hline(yintercept=0)
-ccEAR=coord_cartesian(ylim=c(0,0.4))
+ccEAR=coord_cartesian(ylim=c(0,0.5))
 txt="Age at Dx in 80-89"
 ghp1=geom_hline(yintercept=0.1,col="gray")
 
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+#ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_85.pdf",width=2.5,height=3)

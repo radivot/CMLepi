@@ -138,10 +138,16 @@ D=D|>select(-is_2020,-is_2021,-is_2022)
 load("~/data/mrt/us_mort.RData") 
 (m<-us_mort |>filter(Sex != "Total", Year > 1974)|>select(year=Year,age=Age,sex=Sex,m=Mortality) ) 
 (D=left_join(D,m))
-D=D|>mutate(O=ASH+BEN+CA+COPD+CV+DK+ILL+IN+LC+MCA+MSPC+OCD,E=m*PY) # all cause mortality
+D=D|>mutate(O=ASH+BEN+CA+COPD+CV+DK+ILL+IN+LC+MCA+MSPC+OCD,E=m*PY, # O and E are for all cause (AC) mortality
+            Echk=Eash+Eben+Eca+Ecopd+Ecv+Edk+Eill+Ein+Elc+Emca+Emspc+Eocd) # check that fits sum into alighment with HMD totals
 save(D,file=paste0("~/data/CMLepi/grp_",i,".RData"))
 D|>select(ASH:OCD,O)|>colSums()
   # ASH   BEN    CA  COPD    CV    DK   ILL    IN    LC   MCA  MSPC   OCD     O 
   # 472   432  1359   502  3390   634   105   585  7610   302   296  1982 17669 
 # 17669  is close to 17754 deaths at top. 17754-17669= 85 deaths missing
 D12|>filter(age<=20)|>select(ASH:OCD)|>colSums()|>sum() # yes, 85 young deaths cut out
+D|>select(E,Echk,O)|>colSums()
+ #        E      Echk         O 
+ # 5828.062  5799.980 17669.000   
+# expectations 30 off is not bad since fits were not constrained to sum to the total, and totals are SEER vs HMD  
+
