@@ -27,8 +27,9 @@ gh0=geom_hline(yintercept=0)
 ccEAR=coord_cartesian(ylim=c(0,0.5))
 txt="Age at Dx in 80-89"
 ghp1=geom_hline(yintercept=0.1,col="gray")
+gv0=geom_vline(xintercept=0,col="gray")
 
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_85.pdf",width=2.5,height=3)
@@ -46,28 +47,36 @@ vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.1,21))
 
 txt="Age at Dx in 70-79"
 ccEAR=coord_cartesian(ylim=c(0,0.2))
-ghp06=geom_hline(yintercept=0.06,col="gray")
+ghp05=geom_hline(yintercept=0.05,col="gray")
 
 dt=d20|>filter(agedx>=70,agedx<80) #7.7k
 (D=SEERaBomb::msd(dt,mrt,brkst=c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21)))
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:35,EAR=c(rep(0.1,21))))
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp06+tc(13)+ccEAR+geE+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp05+tc(13)+ccEAR+geE+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_75.pdf",width=3.5,height=3)
 (Vit=us_mort|>filter(Sex == "Total", Year == 2024))
 Vit=Vit|>filter(Age>74)
 (n75=Vit|>life_table()|>filter(Age==75)) # 12.6 years
-vit=Vit|>mutate(Mortality=0.06+Mortality)
-vit|>life_table()|>filter(Age==75) #8.2 years =>lost 4.2
+vit=Vit|>mutate(Mortality=0.05+Mortality)
+vit|>life_table()|>filter(Age==75) #8.75 years =>lost 3.85 lost, call it 3.9 base loss
 dD=D|>filter(t<15)
 (lenV=length(vit$Mortality)) #36 long
 (lenD=length(dD$EAR)) #15 long, so add 21
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.1,21)) 
-(v75=vit|>life_table()|>filter(Age==75)) # 6.8 years so 12.6-6.8 = 5.8 are missing 
+(v75=vit|>life_table()|>filter(Age==75)) # 6.8 years so 12.6-6.8 = 5.8 total loss 
+
+dD=D|>filter(t<8)
+(lenV=length(vit$Mortality)) #36 long
+(lenD=length(dD$EAR)) #8 long, so add 28
+vit=Vit  #reset Vit
+vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.05,28)) 
+vit|>life_table()|>filter(Age==75) # 7.1 years so 12.6-7.1 = 5.5 initial+ base, so 1.6 to spike and 0.3 to rear
+
 
 txt="Age at Dx in 60-69"
 ccEAR=coord_cartesian(ylim=c(0,0.1))
@@ -77,21 +86,30 @@ dt=d20|>filter(agedx>=60,agedx<70) #7.7k
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:45,EAR=c(0.05+(0.05/10)*(0:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_65.pdf",width=4.5,height=3)
 (Vit=us_mort|>filter(Sex == "Total", Year == 2024))
 Vit=Vit|>filter(Age>64)
-(n65=Vit|>life_table()|>filter(Age==65)) # 19.8 years
+(n65=Vit|>life_table()|>filter(Age==65)) # 19.8 years total loss
 vit=Vit|>mutate(Mortality=0.025+Mortality)
-vit|>life_table()|>filter(Age==65) #15 years =>lost 4.8 by min
+vit|>life_table()|>filter(Age==65) #15 years =>lost 4.8 to flat base of 0.025
 dD=D|>filter(t<15)
 (lenV=length(vit$Mortality)) #46 long
 (lenD=length(dD$EAR)) #15 long, so add 31
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
-(v65=vit|>life_table()|>filter(Age==65)) # 12.5 years so 19.8-12.5 = 7.3 are missing 
+(v65=vit|>life_table()|>filter(Age==65)) # 12.5 years so 19.8-12.5 = 7.3 are missing, 2.5 above base 
+
+dD=D|>filter(t<10)
+(lenV=length(vit$Mortality)) #46 long
+(lenD=length(dD$EAR)) #10 long, so add 36
+vit=Vit  #reset Vit
+vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.025,36)) 
+vit|>life_table()|>filter(Age==65) #13.4 years, so 19.8-13.4=6.4 initial+base, so 1.6 in spike and 0.9 in rear 
+
+
 
 txt="Age at Dx in 50-59"
 dt=d20|>filter(agedx>=50,agedx<60) #8.2k
@@ -100,23 +118,31 @@ ghp012=geom_hline(yintercept=0.012,col="gray")
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:55,EAR=c(0.015+(0.035/10)*(0:10),0.05+(0.05/10)*(1:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp012+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp012+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.012,0.025,0.05,0.075,0.1)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/6A_55.pdf",width=5.5,height=3)
 (Vit=us_mort|>filter(Sex == "Total", Year == 2024))
 Vit=Vit|>filter(Age>54)
-(n55=Vit|>life_table()|>filter(Age==55)) # 27.8 years
-vit=Vit|>mutate(Mortality=0.015+Mortality)
-vit|>life_table()|>filter(Age==55) #22.1 years =>lost 5.7 by min
+(n55=Vit|>life_table()|>filter(Age==55)) # 27.8 years total ex
+vit=Vit|>mutate(Mortality=0.012+Mortality)
+vit|>life_table()|>filter(Age==55) #23.1 years =>lost 4.7 to base
 dD=D|>filter(t<15)
-length(vit$Mortality) #46 long
-length(dD$EAR) #15 long, so add 31
+length(vit$Mortality) #56 long
+length(dD$EAR) #15 long, so add 41
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
 (LT55=vit|>life_table())
-(v55=LT55|>filter(Age==55)) # 19.2 years so 27.8-19.2 = 8.6 are missing 
+(v55=LT55|>filter(Age==55)) # 19.2 years so 27.8-19.2 = 8.6 missing =>3.9 to spike and rear 
+
+dD=D|>filter(t<12)
+(lenV=length(vit$Mortality)) #56 long
+(lenD=length(dD$EAR)) #12 long, so add 44
+vit=Vit  #reset Vit
+vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.012,44)) 
+vit|>life_table()|>filter(Age==55) #21 years, so 27.8-21.0=6.8 initial+base, so 2.1 in spike and 1.8 in rear 
+
 
 txt="Age at Dx in 40-49"
 dt=d20|>filter(agedx>=40,agedx<50) #8.2k
@@ -125,7 +151,7 @@ ghp01=geom_hline(yintercept=0.01,col="gray")
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:65,EAR=c(0.01+(0.005/10)*(0:10),0.015+(0.035/10)*(1:10),0.05+(0.05/10)*(1:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+
   geom_line(data=dL,col="red",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.01,0.025,0.05,0.075,0.1)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
@@ -134,13 +160,20 @@ ggsave("LE/outs/6A_45.pdf",width=6.5,height=3)
 Vit=Vit|>filter(Age>44)
 (n45=Vit|>life_table()|>filter(Age==45)) # 36.6 years
 vit=Vit|>mutate(Mortality=0.01+Mortality)
-vit|>life_table()|>filter(Age==45) #30.1 years =>lost 5.5 if nadir held flat
+vit|>life_table()|>filter(Age==45) #30.1 years =>lost 5.5 lost to slab
 dD=D|>filter(t<15)
 length(vit$Mortality) #66 long
-length(dD$EAR) #15 long, so add 31
+length(dD$EAR) #15 long, so add 51
 vit=Vit  #reset Vit
 vit$Mortality=vit$Mortality+c(dD$EAR,dL$EAR) 
-(v45=vit|>life_table()|>filter(Age==45)) # 25.8 years so 36.6-25.8 = 10.8 are missing 
+(v45=vit|>life_table()|>filter(Age==45)) # 25.8 years so 36.6-25.8 = 10.8 is total missing, 5.3 to spike and rear 
+
+vit=Vit  #reset Vit
+vit$Mortality=vit$Mortality+c(dD$EAR,rep(0.01,51))
+vit|>life_table()|>filter(Age==45) # 27.8 years so 36.6-27.8 = 8.8 to spike and slab, so 3.3. to spike and 2.2 to rear 
+
+
+
 paste0("Normal LE=",n45["ex"],", CML LE=",v45["ex"],", Loss=",n45["ex"]-v45["ex"])
 (v=bind_rows(v45,v55,v65,v75,v85))
 (n=bind_rows(n45,n55,n65,n75,n85))
@@ -151,11 +184,12 @@ dLE$Sex="Both"
 dLE$paper="this study"
 (dLE=dLE|>mutate(value=LLE,PLLE=LLE/LE0)) #our LLE and PLLE in B and C 
 #     LE0    LE   LLE Agedx name  Sex   paper      value  PLLE
-# 1 36.6  25.9  10.7     45 LLE   Both  this study 10.7  0.292
-# 2 27.8  19.3   8.54    55 LLE   Both  this study  8.54 0.307
-# 3 19.8  12.6   7.20    65 LLE   Both  this study  7.20 0.364
-# 4 12.6   6.98  5.67    75 LLE   Both  this study  5.67 0.448
-# 5  6.91  3.32  3.59    85 LLE   Both  this study  3.59 0.519
+#   <dbl> <dbl> <dbl> <dbl> <chr> <chr> <chr>      <dbl> <dbl>
+# 1 36.6  25.8  10.8     45 LLE   Both  this study 10.8  0.294
+# 2 27.8  19.2   8.60    55 LLE   Both  this study  8.60 0.309
+# 3 19.8  12.5   7.30    65 LLE   Both  this study  7.30 0.369
+# 4 12.6   6.83  5.82    75 LLE   Both  this study  5.82 0.460
+# 5  6.91  3.11  3.80    85 LLE   Both  this study  3.80 0.550
 
 # next get values of BJH paper 
 # install.packages("docxtractr")

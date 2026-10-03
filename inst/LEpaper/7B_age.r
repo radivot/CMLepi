@@ -77,6 +77,17 @@ Da|>filter(!cause%in%codA,age<95)|>mutate(cause=factor(cause))|>
   scale_x_continuous(minor_breaks=NULL,breaks=seq(30,90,20))+ 
   jco+tc(13)+ leg + gx +facet_wrap(~cause,ncol=6)+sbb +coord_cartesian(ylim=c(-0.007,0.07))
 ggsave(file="LE/outs/7B_agePanel.pdf",height=4,width=8) 
+Da|>filter(age<60,cause=="CVDK")|>mutate(ageG=cut(age,seq(20,60,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR))
+#   ageG         EAR
+#   <fct>      <dbl>
+# 1 (20,30] 0.000398
+# 2 (30,40] 0.000622
+# 3 (40,50] 0.000717
+# 4 (50,60] 0.00104 
+Da|>filter(cause=="CVDK")|>mutate(ageG=cut(age,seq(20,90,5)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR))
+
 # 
 # d=D|>filter(age>60)|>select(age,EAR,EARcvdk,EARocd)
 # d=d|>mutate(ratio=(EARcvdk+EARocd)/EAR) # 35% if including ocd
