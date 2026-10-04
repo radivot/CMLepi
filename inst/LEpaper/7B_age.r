@@ -85,8 +85,19 @@ Da|>filter(age<60,cause=="CVDK")|>mutate(ageG=cut(age,seq(20,60,10)))|>
 # 2 (30,40] 0.000622
 # 3 (40,50] 0.000717
 # 4 (50,60] 0.00104 
-Da|>filter(cause=="CVDK")|>mutate(ageG=cut(age,seq(20,90,5)))|>
-  group_by(ageG)|>summarize(EAR=mean(EAR))
+Da|>filter(cause=="CVDK")|>mutate(ageG=cut(age,seq(20,90,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR))#2.7%
+Da|>filter(cause=="OCD")|>mutate(ageG=cut(age,seq(20,90,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR)) #0.5%
+Da|>filter(cause=="ASH")|>mutate(ageG=cut(age,seq(20,90,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR)) #0.4% 
+# so they sum to 3.8%, which is roughly half of 6.9% below
+Da|>filter(cause=="AC")|>mutate(ageG=cut(age,seq(20,90,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR))#7%
+# and higher than 3.5% via LC
+Da|>filter(cause=="LC")|>mutate(ageG=cut(age,seq(20,90,10)))|>
+  group_by(ageG)|>summarize(EAR=mean(EAR))#3.4%
+
 
 # 
 # d=D|>filter(age>60)|>select(age,EAR,EARcvdk,EARocd)
