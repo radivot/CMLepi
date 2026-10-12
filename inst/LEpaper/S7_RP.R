@@ -1,8 +1,8 @@
-# Figure S8 RP fit
-graphics.off();rm(list=ls())#clear plots and environment 
-library(flexsurv) 
+# Figure S7 RP fit
+graphics.off();rm(list=ls())#clear plots and environment
+library(flexsurv)
 library(tidyverse)
-load("~/data/CMLepi/cml20.RData") 
+load("~/data/CMLepi/cml20.RData")
 (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
@@ -32,7 +32,7 @@ load("~/data/CMLepi/hBack.RData")  # made in S8_mkhBack.R
 D=D|>mutate(LLy=LL+y,ULy=UL+y,EARy=EAR+y)
 # cc1=coord_cartesian(xlim=c(0,22),ylim=c(0,0.25))
 (fsp <- flexsurvspline(Surv(surv, status) ~ 1, data = d,k=2,scale="hazard",bhazard=h))
-(h <- as.data.frame(summary(fsp, type = "hazard", t = seq(0.1,25,0.1)))) 
+(h <- as.data.frame(summary(fsp, type = "hazard", t = seq(0.1,25,0.1))))
 (h$y=approx(x=hb$time,y=hb$hazard,xout=h$time)$y)
 (h=h|>mutate(LL=lcl+y,UL=ucl+y,h=est+y))
 # source("LE/setup.R")
@@ -53,4 +53,4 @@ D|>ggplot(aes(x=t,y=EARy))+gp+gx+gyE+gh0+tc(13)+leg+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   geom_errorbar(aes(x=t,y=EARy,ymin=LLy,ymax=ULy),data=D,width=0.2)+ #tc(13)+
   geom_vline(xintercept = exp(fsp$aux$knots), col="gray80", lty=2) + cc1
-ggsave("LE/outs/supp/S8_RP.pdf",width=3.5,height=3.5)  
+ggsave("LE/outs/supp/S7_RP.pdf",width=3.5,height=3.5)

@@ -1,11 +1,11 @@
 ## S6_timeAge.R
-graphics.off();rm(list=ls())#clear plots and environment 
+graphics.off();rm(list=ls())#clear plots and environment
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData") #made in mkSEER.R
 (d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d20=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
-d=d20|>select(yrdx,agedx,sex,surv,status) 
+d=d20|>select(yrdx,agedx,sex,surv,status)
 (ages=seq(40,90,10))
 leg=theme(legend.margin=margin(0,0,0,0),legend.position="top",legend.text=element_text(size=12))
 gx=xlab("Years Since Dx")
@@ -31,7 +31,7 @@ for (i in 1:5) {
   D|>ggplot(aes(x=t,y=RR)) +gp+gl+gx+gh1+gh2+tc(13)+leg+scale_y_continuous(breaks=c(1,2,5,10,15))+geRR+
     ggtitle(txt)+  theme(plot.title = element_text(size = 10))+
     scale_color_manual(values = c("gray","black"),name = "Year of Dx")+ylab("Relative Risk of Death")
-  ggsave(paste0("LE/outs/supp/S7_RNR",ages[i],".pdf"),width=2.5,height=3)
+  ggsave(paste0("LE/outs/supp/S6_RNR",ages[i],".pdf"),width=2.5,height=3)
   sy= scale_y_continuous(breaks=c(0,yint[i],0.025,0.05,0.075,0.1,0.2,0.3))
   ghp2=geom_hline(yintercept=yint[i],col="gray")
   if (i==4) {sy= scale_y_continuous(breaks=c(0,0.06,0.1,0.15,0.2))}
@@ -39,5 +39,5 @@ for (i in 1:5) {
   D|>ggplot(aes(x=t,y=EAR))+gp+gl+gx+gyE+gh0+ghp2+tc(13)+leg+geE+ccEAR+
     ggtitle(txt)+  theme(plot.title = element_text(size = 10))+
     scale_x_continuous(breaks=c(0,5,10,15,20,25))+sy
-  ggsave(paste0("LE/outs/supp/S7_EAR",ages[i],".pdf"),width=2.5,height=3)
+  ggsave(paste0("LE/outs/supp/S6_EAR",ages[i],".pdf"),width=2.5,height=3)
 }
