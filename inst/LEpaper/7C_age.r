@@ -1,4 +1,4 @@
-# 7B_age.R   
+# 7C_age.R   
 # graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)  
 load("~/data/CMLepi/grp_KK.RData")
@@ -65,7 +65,7 @@ Da|>filter(cause%in%codA,age<95)|>mutate(cause=factor(cause,levels=codA))|>
   ggplot(aes(x=age,y=EAR,col=cause,shape=cause))+gh0+ghE+geEAR+geom_line()+geom_point(size=0.5)+shps+
   scale_x_continuous(minor_breaks=NULL,breaks=seq(20,90,10))+ 
   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ jco+tc(13)+ leg + gx  + ccE
-ggsave(file="LE/outs/7B_age.pdf",height=3.5,width=3.5) # TKI driven excess risks rise with aging
+ggsave(file="LE/outs/7C_age.pdf",height=3.5,width=4.5) # TKI driven excess risks rise with aging
 
 sbb=theme(strip.background=element_blank(),strip.text=element_text(size=10)) 
 ghp01=geom_hline(yintercept=c(0.01),col="gray")
@@ -76,7 +76,7 @@ Da|>filter(!cause%in%codA,age<95)|>mutate(cause=factor(cause))|>
   scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+
   scale_x_continuous(minor_breaks=NULL,breaks=seq(30,90,20))+ 
   jco+tc(13)+ leg + gx +facet_wrap(~cause,ncol=6)+sbb +coord_cartesian(ylim=c(-0.007,0.07))
-ggsave(file="LE/outs/7B_agePanel.pdf",height=4,width=8) 
+ggsave(file="LE/outs/7C_agePanel.pdf",height=4,width=10) 
 Da|>filter(age<60,cause=="CVDK")|>mutate(ageG=cut(age,seq(20,60,10)))|>
   group_by(ageG)|>summarize(EAR=mean(EAR))
 #   ageG         EAR

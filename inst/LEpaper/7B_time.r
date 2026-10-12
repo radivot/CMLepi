@@ -1,4 +1,4 @@
-# 7A_time.R   
+# 7B_time.R   
 graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)  
 load("~/data/CMLepi/grp_KK.RData") 
@@ -68,7 +68,7 @@ Dt|>filter(cause%in%codA)|>mutate(cause=factor(cause,levels=codA))|>
   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ 
   scale_x_continuous(breaks=c(0,10,20))+ 
   jco+tc(13)+ leg + gx
-ggsave(file="LE/outs/7A_time.pdf",height=3.5,width=3.5) # LC + TKI driven excess risks
+ggsave(file="LE/outs/7B_time.pdf",height=3.5,width=4.5) # LC + TKI driven excess risks
 
 sbb=theme(strip.background=element_blank(),strip.text=element_text(size=10)) 
 codA=c("LC","CVDK","ASH","CV","DK")
@@ -79,7 +79,7 @@ Dt|>filter(!cause%in%codA)|>mutate(cause=factor(cause))|>
   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ 
   scale_x_continuous(breaks=c(0,10,20))+ 
   jco+tc(13)+ leg + gx +facet_wrap(~cause,nrow=2)+sbb #+coord_cartesian(ylim=c(-0.005,0.05))
-ggsave(file="LE/outs/7A_timePanel.pdf",height=4,width=8) 
+ggsave(file="LE/outs/7B_timePanel.pdf",height=4,width=10) 
 
 d=D|>select(t,EARocd,EARcvdk,EAR)
 d=d|>mutate(ratio=EARcvdk/EAR,t=t+0.5)  # 40%
