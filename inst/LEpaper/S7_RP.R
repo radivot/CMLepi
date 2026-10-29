@@ -1,9 +1,9 @@
-# Figure S7 RP fit
+# Figure S7 RP fit focusing on 9863
 graphics.off();rm(list=ls())#clear plots and environment
 library(flexsurv)
 library(tidyverse)
 load("~/data/CMLepi/cml20.RData")
-(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
+(d20=d20|>filter(histo3==9863,agedx<90)) #44551
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
 range(d$agedx) # 90 is 90+
@@ -27,7 +27,7 @@ d=d|>mutate(a=as.character(round(agedx+surv)))
 d=d|>mutate(y=as.character(round(yrdx+surv)))
 getMort=function(s,a,y) mrt[[s]][a,y]
 d$h=mapply(getMort,d$s,d$a,d$y)
-load("~/data/CMLepi/hBack.RData")  # made in S8_mkhBack.R
+load("~/data/CMLepi/hBack_63.RData")  # made in S8_mkhBack.R
 (D$y=approx(x=hb$time,y=hb$hazard,xout=D$t)$y)
 D=D|>mutate(LLy=LL+y,ULy=UL+y,EARy=EAR+y)
 # cc1=coord_cartesian(xlim=c(0,22),ylim=c(0,0.25))
@@ -53,4 +53,4 @@ D|>ggplot(aes(x=t,y=EARy))+gp+gx+gyE+gh0+tc(13)+leg+
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   geom_errorbar(aes(x=t,y=EARy,ymin=LLy,ymax=ULy),data=D,width=0.2)+ #tc(13)+
   geom_vline(xintercept = exp(fsp$aux$knots), col="gray80", lty=2) + cc1
-ggsave("LE/outs/supp/S7_RP.pdf",width=3.5,height=3.5)
+ggsave("LE/outs/supp/S7_RP_63.pdf",width=3.5,height=3.5)

@@ -2,7 +2,7 @@ graphics.off();rm(list=ls())#clear plots and environment
 library(tidyverse)
 tc=function(sz) theme_classic(base_size=sz)
 load("~/data/CMLepi/cml20.RData") 
-(d20=d20|>filter(histo3%in%c(9863,9875),agedx<90)) #44551
+(d20=d20|>filter(histo3==9863,agedx<90)) #44551
 d20=d20|>mutate(surv=ifelse(surv>80,0.001,surv)) # S=NA cases =>0.001
 d=d20|>mutate(surv=ifelse(surv==0,0.001,surv)) # S=0 => 0.001
 agedxUL=64  
@@ -20,4 +20,4 @@ for (i in 1:20) {
 M
 (h59=apply(M,1,sum))
 hb=data.frame(time=0:44,hazard=h59)
-save(hb,file="~/data/CMLepi/hBack.RData")
+save(hb,file="~/data/CMLepi/hBack_63.RData")
