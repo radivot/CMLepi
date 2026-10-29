@@ -1,7 +1,7 @@
-# 7B_time.R   
+# 6C_time.R   
 graphics.off();rm(list=ls())#clear plots and environment 
 library(tidyverse)  
-load("~/data/CMLepi/grp_KK.RData") 
+load("~/data/CMLepi/grp_KK_63.RData") 
 D=D|>filter(year>=2005,age>=60,age<=89) 
 names(D) 
 #  [1] "age"   "year"  "t"     "sex"   "PY"    "ASH"   "BEN"   "CA"    "COPD"  "CV"    "DK"    "ILL"   "IN"    "LC"    "MCA"   "MSPC" 
@@ -47,7 +47,6 @@ Dt=bind_rows(Dac,Dash,Dben,Dca,Dcopd,Dcv,Ddk,Dcvdk,Dlc,Dill,Din,Dmca,Dmspc,Docd)
 
 myt=theme(legend.text=element_text(size=12),strip.text=element_text(size=12))
 geEAR=geom_errorbar(aes(ymin=LL,ymax=UL),width=.05,col="gray")
-EARbrks=c(0,0.01,0.05,0.1)
 ghE=geom_hline(yintercept=c(0.01),col="gray")
 leg=theme(legend.margin=margin(0,0,0,0),legend.title=element_blank(),
           legend.position="top") #redfine leg without size increase
@@ -63,30 +62,35 @@ sbb=theme(strip.background=element_blank(),strip.text=element_text(size=10))
 codA=c("LC","CVDK","OCD","ASH")
 codA=c("LC","CVDK","ASH")
 codA=c("AC","LC","CVDK","OCD")
+EARbrks=c(0,0.01,0.05,0.1,0.2)
 Dt|>filter(cause%in%codA)|>mutate(cause=factor(cause,levels=codA))|>
   ggplot(aes(x=t,y=EAR,col=cause,shape=cause))+gh0 +ghE+geEAR+geom_line()+geom_point(size=1)+ 
   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ 
   scale_x_continuous(breaks=c(0,10,20))+ 
-  jco+tc(13)+ leg + gx
-ggsave(file="LE/outs/7B_time.pdf",height=3.5,width=4.5) # LC + TKI driven excess risks
+  jco+tc(14)+ leg + gx
+ggsave(file="LE/outs/6C_time.pdf",height=4.5,width=4.5) # LC + TKI driven excess risks
 
 sbb=theme(strip.background=element_blank(),strip.text=element_text(size=10)) 
 codA=c("LC","CVDK","ASH","CV","DK")
 codA=c("LC","CVDK","OCD","CV","DK","AC")
 codA=c("CVDK","AC")
+EARbrks=c(0,0.01,0.05,0.1)
 Dt|>filter(!cause%in%codA)|>mutate(cause=factor(cause))|>
   ggplot(aes(x=t,y=EAR))+gh0 +ghE+geEAR+geom_line()+geom_point(size=1)+ 
   gyE+scale_y_continuous(minor_breaks=NULL,breaks=EARbrks)+ 
   scale_x_continuous(breaks=c(0,10,20))+ 
   jco+tc(13)+ leg + gx +facet_wrap(~cause,nrow=2)+sbb #+coord_cartesian(ylim=c(-0.005,0.05))
-ggsave(file="LE/outs/7B_timePanel.pdf",height=4,width=10) 
+ggsave(file="LE/outs/6C_timePanel.pdf",height=4,width=10) 
 
 d=D|>select(t,EARocd,EARcvdk,EAR)
 d=d|>mutate(ratio=EARcvdk/EAR,t=t+0.5)  # 40%
 d=d|>mutate(ratio=(EARcvdk+EARocd)/EAR,t=t+0.5) #>50% 
 ghE=geom_hline(yintercept=c(0.01),col="gray")
+gx=xlab("Years Since Dx")
+gy=ylab("TKI/Total EAR Ratio")
 gv=geom_vline(xintercept=c(15),col="gray")
-d|>ggplot(aes(x=t,y=ratio))+gh0+ghE+gv+geom_line()+geom_point(size=0.5)+ gyE +tc(12)
+d|>ggplot(aes(x=t,y=ratio))+gh0+gv+geom_line()+geom_point(size=0.5)+ gyE+gx+gy+tc(12)+coord_cartesian(ylim=c(0,1))
+ggsave(file="LE/outs/6C_propTKI.pdf",height=3,width=3) 
 # average over times >2 years, TKI account for roughly 25% of total EAR.  
 # focus on times >10 years in 7B_time.R to get average ratio at steady state
 

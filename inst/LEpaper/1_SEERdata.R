@@ -39,9 +39,23 @@ ggsave("LE/outs/1B_countsByCodes.png",width=4,height=2.5)
 
 d=bind_rows(d20,d12,d8) #75880
 d=d|>distinct(pick(-db)) # don't count it as different via db being different
-d # 53254 unique cases = number in figure legend; others there were read off by eye
+d #  unique diagnoses 
+(id2=d$id[duplicated(d$id)])# 28903294 in there twice
+d|>filter(id%in%id2)
+#         id sex   agedx  yrdx histo3 cancer  surv status   COD COD2  COD12 CODS 
+#      <int> <fct> <int> <dbl>  <dbl> <chr>  <dbl>  <dbl> <int> <chr> <chr> <fct>
+# 1 28903294 Male     42  2006   9863 CML     17.2      0     0 alive alive Alive
+# 2 28903294 Male     48  2012   9875 CML     11.4      0     0 alive alive Alive
+### so here we only want the early year of Dx entry
+d=d|>arrange(yrdx) 
+d=d|>distinct(id,.keep_all = TRUE) #remove duplicated id
+d|>filter(id%in%id2) #check, yes, we got the first one
+#         id sex   agedx  yrdx histo3 cancer  surv status   COD COD2  COD12 CODS 
+# 1 28903294 Male     42  2006   9863 CML     17.2      0     0 alive alive Alive
+d # 53253 unique cases = number in figure legend; others there were read off by eye
 system.time(save(d,file="~/data/CMLepi/cml.RData"))  # 0.1 secs 
 # Note: this binary is smaller than cml20.RData (60.8k cases) because it does not include CMML.
+
 
 hist(d$surv) #outlier cluster past 80 are unknown survival times
 (du=d|>filter(surv>80)) # 668 with unknown survival times = 89.7

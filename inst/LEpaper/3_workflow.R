@@ -30,7 +30,7 @@ cc1=coord_cartesian(ylim=c(0.015,NA),xlim=c(2000,2025))
 (Dr=Dr|>mutate(yG=ifelse(year<=2013,"2013","2023")))
 Dr|>ggplot(aes(x=year,y=EAR,col=yG))+geE+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
   geom_line(aes(y=fit),data=pD)+cc1+
-  scale_y_log10(breaks=EARbrks)+tc(13)+ghp2+ghp03+ylab("Excess Absolute Risk of Death")+leg+labs(x="Year",color="Data through")
+  scale_y_log10(breaks=EARbrks)+tc(13)+ghp2+ghp03+ylab("Excess Absolute Risk of Death")+leg+labs(x="Year",color="data through")
 ggsave(file="LE/outs/3_workflowEARm.pdf",height=3,width=3) # EAR for males
 
 (US=reshape2::acast(D|>select(year,age,m),age~year,value.var="m")) # get into matrix form

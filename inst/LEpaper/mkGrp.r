@@ -1,29 +1,29 @@
-# mkGrp.R  EE = exclude both;  KK = keep both (of S=NA and S=0)  
+# mkGrp.R focusing on 9863, EE = exclude both;  KK = keep both (of S=NA and S=0)  
 graphics.off();rm(list=ls())#clear plots and environment 
 library(survival)
 library(tidyverse)  
 library(mgcv)  # if not here, predict uses lm, which throws "lm object does not have a proper 'qr' component"
 options(pillar.sigfig = 5) # Shows 5 significant digits to get decimal after year in tibble prints
 load("~/data/CMLepi/G12.RData") # made in mkMorts.R
-load("~/data/CMLepi/cml.RData") #made in mkSEER.R  53.2k
-d=d|>mutate(COD12=as.factor(COD12)) 
+load("~/data/CMLepi/cml.RData") #made in 1_SEERdata.R  53.2k
+d=d|>mutate(COD12=as.factor(COD12))|>filter(histo3==9863) #35.2k
 levels(d$COD12) # alive" "ASH"   "BEN"   "CA"    "COPD"  "CV"    "DK"    "ILL"   "IN"    "LC"    "MCA"   "MSPC"  "OCD"  
-(d0=d|>filter(yrdx>=2000)) #45636  
-d0|>filter(agedx==90) #1,085 × 12
-d0|>filter(surv>80) #533 × 12
-d0|>filter(surv==0) #224 × 12
-(dKK=d0|>filter(agedx<90)) #44551 
-dKK|>filter(surv>80) #416 × 12
-dKK|>filter(surv==0) #203 × 12
+(d0=d|>filter(yrdx>=2000)) #27.6k  
+d0|>filter(agedx==90) #884 × 12
+d0|>filter(surv>80) #525 × 12
+d0|>filter(surv==0) #192 × 12
+(dKK=d0|>filter(agedx<90)) #26.7k 
+dKK|>filter(surv>80) #409 × 12
+dKK|>filter(surv==0) #172 × 12
 dKK=dKK|>mutate(agedx=agedx+0.5,yrdx=yrdx+0.5) # keep in mind that doing this pushes some people's surv times into 2024.  
-sum(dKK$status) # 17754 deaths
+sum(dKK$status) # 12997 deaths
 i="KKold"  # keep everything
 i="EE"
 i="DIFF"
 i="OLD"
 i="KK"
 if (i=="EE") # exlude both
-  (d=dKK|>filter(surv<80,surv>0)) #43932
+  (d=dKK|>filter(surv<80,surv>0))
 if (i=="KK") {
   d=dKK|>mutate(surv=ifelse(surv>80,0.001,surv)) 
   d=d|>mutate(surv=ifelse(surv==0,0.001,surv)) 
@@ -108,7 +108,7 @@ system.time(dOCD<-biostat3::survRate(Surv(PY,OCD)~age+year+t+sex, data=Dayt)|>ti
 D$is_2020 <- as.numeric(D$year == 2020)
 D$is_2021 <- as.numeric(D$year == 2021)
 D$is_2022 <- as.numeric(D$year == 2022)
-save(D,file=paste0("~/data/CMLepi/D_",i,".RData")) #save intermediate since above takes time
+save(D,file=paste0("~/data/CMLepi/D_",i,"_63.RData")) #save intermediate since above takes time
 D=D|>mutate(num=ASH,denom=PY)
 D$Eash=as.numeric(exp(predict(G[["ASH"]],D,qr=TRUE)))
 D=D|>mutate(num=BEN)
@@ -140,14 +140,13 @@ load("~/data/mrt/us_mort.RData")
 (D=left_join(D,m))
 D=D|>mutate(O=ASH+BEN+CA+COPD+CV+DK+ILL+IN+LC+MCA+MSPC+OCD,E=m*PY, # O and E are for all cause (AC) mortality
             Echk=Eash+Eben+Eca+Ecopd+Ecv+Edk+Eill+Ein+Elc+Emca+Emspc+Eocd) # check that fits sum into alighment with HMD totals
-save(D,file=paste0("~/data/CMLepi/grp_",i,".RData"))
+save(D,file=paste0("~/data/CMLepi/grp_",i,"_63.RData"))
 D|>select(ASH:OCD,O)|>colSums()
   # ASH   BEN    CA  COPD    CV    DK   ILL    IN    LC   MCA  MSPC   OCD     O 
-  # 472   432  1359   502  3390   634   105   585  7610   302   296  1982 17669 
-# 17669  is close to 17754 deaths at top. 17754-17669= 85 deaths missing
+  # 321   400   929   366  2440   441    76   442  5750   225   202  1348 12940 
 D12|>filter(age<=20)|>select(ASH:OCD)|>colSums()|>sum() # yes, 85 young deaths cut out
 D|>select(E,Echk,O)|>colSums()
- #        E      Echk         O 
- # 5828.062  5799.980 17669.000   
-# expectations 30 off is not bad since fits were not constrained to sum to the total, and totals are SEER vs HMD  
+ #       E      Echk         O 
+ # 3928.732  3914.119 12940.000 
+# expectations 14 off is not bad since fits were not constrained to sum to the total, and totals are SEER vs HMD  
 
