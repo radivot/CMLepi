@@ -83,18 +83,18 @@ load("~/data/CMLepi/G12.RData") # made in mkMorts.R via CMLepi::mkG12()
 (nms=names(G)) # "CA"   "LC"   "MCA"  "BEN"  "IN"   "DK"   "CV"   "COPD" "MSPC" "ILL"  "ASH"  "OCD" 
 tits
 ######## new rgl problem on mac doesn't let this work in a for loop anymore
-i="LC"  # very slight covid impact
-i="CA"  
-i="MCA"  
-i="BEN"  
-i="IN"  
-i="DK"  
 i="CV"  
 i="COPD"  
 i="MSPC"  
 i="ASH"  # also big ridge
 i="OCD"  # big ridge, so lots of covid deaths in here
 i="ILL"  
+i="LC"  # very slight covid impact
+i="CA"  
+i="MCA"  
+i="BEN"  
+i="IN"  
+i="DK"  
 print(i)
 D=L[[i]]
 D  # scroll through to see that data goes into low 90's with ages pegged by mkAges
@@ -108,7 +108,8 @@ D  # scroll through to see that data goes into low 90's with ages pegged by mkAg
 ## plot the data used in the fit
 head(D<-D%>%mutate(incid=num/denom))
 head(D<-D%>%mutate(incid=if_else(incid==0,0.0001,incid)))
-with(D,plot3d(year,age,log10(incid),col=ifelse(sex=="Female","red","blue"),
+with(D,plot3d(year,age,log10(incid),col=ifelse(sex=="Female","#EFC000FF","#0073C2FF"),
+# with(D,plot3d(year,age,log10(incid),col=ifelse(sex=="Female","red","blue"),
               xlab="",ylab="Age",zlab="log10(M)",alpha=1,size=4))
 #### set up fine mesh to plot the fit
 (Ages=seq(min(D$age),max(D$age)))
@@ -127,11 +128,19 @@ nD$is_2020 <- as.numeric(nD$year == 2020)
 nD$is_2021 <- as.numeric(nD$year == 2021)
 nD$is_2022 <- as.numeric(nD$year == 2022)
 nD$E=exp(predict(G[[i]],nD))
+
+clear3d(type = "lights")
+light3d(
+  ambient = "gray90",
+  diffuse = "gray90",
+  specular = "gray90"
+)
+
 M=reshape2::acast(nD%>%filter(sex=="Female")%>%select(year,age,E), year~age, value.var="E")
-surface3d(Years,Ages,log10(M),col="red",alpha=0.4) # M for Matrix
+surface3d(Years,Ages,log10(M),col="#EFC000FF",alpha=1) # M for Matrix
 M=reshape2::acast(nD%>%filter(sex=="Male")%>%select(year,age,E), year~age, value.var="E")
-surface3d(Years,Ages,log10(M),col="blue",alpha=0.4)
-light3d(theta = 0, phi = 75)
+surface3d(Years,Ages,log10(M),col="#0073C2FF",alpha=1)
+# light3d(theta = 0, phi = 75)
 bgplot3d({
   plot.new()
   title(main = paste0(i), line = 0,cex.main=1)

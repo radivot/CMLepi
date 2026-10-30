@@ -10,6 +10,7 @@ d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000))
 D=d|>group_by(yrdx,histo3)|>summarize(mage=mean(agedx))#both 
 gh=geom_hline(yintercept=c(50,59),col="gray")
 gv=geom_vline(xintercept=c(1992,2007),col="gray")
+jco=ggsci::scale_color_jco()
 myt=theme(
   legend.key.size = unit(0.4, "cm"),
   legend.position = c(0.20,0.4),
@@ -18,12 +19,12 @@ myt=theme(
   legend.key.spacing.y = unit(0.0, "cm"),
   legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
 )
-D|>ggplot(aes(x=yrdx,y=mage,group=histo3,col=histo3)) + gh + gv + geom_line()+tc(13)+
+D|>ggplot(aes(x=yrdx,y=mage,group=histo3,col=histo3)) + gh + gv + geom_line()+tc(13)+ jco+
   labs(y="Mean Age at Dx",x="Year of Dx",col="ICD-O-3")+
   scale_x_continuous(breaks=c(1992,2000,2007,2023))+
   scale_y_continuous(breaks=c(50,53,56,59))+myt
 ggsave("LE/outs/4A_dxAges.pdf",width=2.5,height=2) 
-ggsave("LE/outs/4A_dxAges.png",width=2.5,height=2) 
+ggsave("LE/outs/pngs/4A_dxAges.png",width=2.5,height=2) 
 
 # get life expectancy at 59 as function of years
 # https://github.com/robjhyndman/vital  updated for US HMD data
@@ -42,7 +43,7 @@ D|>ggplot(aes(x=Year,y=ex))+gh+gv+
   scale_x_continuous(breaks=c(1992,2000,2010,2019,2024))+
   theme(axis.text.x = element_text(size = 9) )
 ggsave("LE/outs/4B_normalLEs.pdf",width=3,height=2)
-ggsave("LE/outs/4B_normalLEs.png",width=3,height=2)
+ggsave("LE/outs/pngs/4B_normalLEs.png",width=3,height=2)
 
 head(d<-d12|>filter(histo3%in%c(9863,9875))) #15325 
 d=d|>mutate(surv=ifelse(surv>80,0.001,surv)) # stick with >80 for identifying S=NA cases
@@ -54,11 +55,11 @@ d=d|>filter(histo3==9863|(histo3=9875)&(yrdx>2000)) # >50 deaths by 9875 after y
 (Dt=Dt|>filter(status==1))
 (DT=Dt|>group_by(yrDth,histo3)|>summarize(mage=mean(ageDth)))
 gh=geom_hline(yintercept=c(65,75),col="gray")
-DT|>ggplot(aes(x=yrDth,y=mage,group=histo3,col=histo3)) + gh + geom_line()+tc(13)+
+DT|>ggplot(aes(x=yrDth,y=mage,group=histo3,col=histo3)) + gh + geom_line()+tc(13)+jco +
   labs(y="Mean Age at Death",x="Year of Death",col="ICD-O-3") + 
   scale_y_continuous(breaks=seq(65,75,5))+geom_smooth()+
   scale_x_continuous(breaks=c(1975,1986,1992,2000,2010,2023))+ myt +
 theme(legend.position = c(0.85,0.18))
 ggsave("LE/outs/4C_deathsAges.pdf",width=2.5,height=2)
-ggsave("LE/outs/4C_deathsAges.png",width=2.5,height=2)
+ggsave("LE/outs/pngs/4C_deathsAges.png",width=2.5,height=2)
 

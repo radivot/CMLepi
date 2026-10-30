@@ -27,10 +27,14 @@ gh0=geom_hline(yintercept=0)
 txt="Age at Dx in 80-89"
 ghp1=geom_hline(yintercept=0.1,col="gray")
 gv0=geom_vline(xintercept=0,col="gray")
+jco=ggsci::scale_color_jco()
+# 1. #0073C2FF (A deep, professional blue)
+# 2. #EFC000FF (A prominent mustard yellow)
+# 3. #868686FF (A muted neutral gray)
 
 ccEAR=coord_cartesian(ylim=c(0,0.56))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp1+tc(13)+geE+ccEAR+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.1,0.2,0.3,0.4,0.5)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_85.pdf",width=4,height=3)
@@ -55,8 +59,8 @@ dt=d20|>filter(agedx>=70,agedx<80) #7.7k
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:35,EAR=c(rep(0.1,21))))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp06+tc(13)+ccEAR+geE+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp06+tc(13)+ccEAR+geE+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.06,0.1,0.2)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_75.pdf",width=4,height=3)
@@ -88,8 +92,8 @@ dt=d20|>filter(agedx>=60,agedx<70) #7.7k
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:45,EAR=c(0.05+(0.05/10)*(0:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp025+tc(13)+geE+ccEAR+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_65.pdf",width=4,height=3)
 (Vit=us_mort|>filter(Sex == "Total", Year == 2024))
@@ -119,8 +123,8 @@ ghp01=geom_hline(yintercept=0.016,col="gray")
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:51,EAR=c(0.015+(0.035/10)*(4:10),0.05+(0.05/10)*(1:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.016,0.025,0.05,0.075,0.1)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_59.pdf",width=4,height=3)
@@ -153,8 +157,8 @@ ccEAR=coord_cartesian(ylim=c(0,0.1))
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:55,EAR=c(0.015+(0.035/10)*(0:10),0.05+(0.05/10)*(1:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp012+tc(13)+geE+ccEAR+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp012+tc(13)+geE+ccEAR+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.01,0.025,0.05,0.075,0.1)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_55.pdf",width=4,height=3)
@@ -186,8 +190,8 @@ ghp01=geom_hline(yintercept=0.01,col="gray")
 D=D|>rename(Group="sex")|>select(Group,int,everything())
 (D=SEERaBomb::foldD(D,keep=c("int")))
 (dL=tibble(t=15:65,EAR=c(0.01+(0.005/10)*(0:10),0.015+(0.035/10)*(1:10),0.05+(0.05/10)*(1:10),rep(0.1,20))))
-D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+
-  geom_line(data=dL,col="red",linewidth=1)+
+D|>ggplot(aes(x=t,y=EAR))+gv0+gp+gl+gx+gyE+gh0+ghp01+tc(13)+geE+ccEAR+jco+
+  geom_line(data=dL,col="#0073C2FF",linewidth=1)+
   scale_y_continuous(breaks=c(0,0.01,0.025,0.05,0.075,0.1)) +
   ggtitle(txt)+  theme(plot.title = element_text(size = 10))
 ggsave("LE/outs/5A_45.pdf",width=4,height=3)
@@ -285,8 +289,11 @@ myt=theme(legend.key.size = unit(0.4, "cm"),
   legend.key.spacing.y = unit(0.0, "cm"),
   legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt") )
 
-bjh|>ggplot(aes(x=Agedx,y=LLE,col=Sex,pch=paper))+gv +gh+ geom_line()+ geom_point()+
-  tc(13)+xlab("Age at Dx")+ylab("Years of Life Lost")+gh0+
+
+# bjh|>ggplot(aes(x=Agedx,y=LLE,col=Sex,pch=paper))+gv +gh+ geom_line()+ geom_point()+
+bjh|>mutate(Sex=factor(Sex,levels=c("Male","Female","Both")))|>
+  ggplot(aes(x=Agedx,y=LLE,col=Sex,pch=paper))+gv +gh+ geom_line()+ geom_point()+
+  tc(13)+xlab("Age at Dx")+ylab("Years of Life Lost")+gh0+jco+
   scale_y_continuous(breaks=seq(0,12,1))+
   geom_point(data=en13,size=2)+
   geom_point(data=dLE,size=2)+
@@ -299,10 +306,13 @@ bjh|>ggplot(aes(x=Agedx,y=LLE,col=Sex,pch=paper))+gv +gh+ geom_line()+ geom_poin
 ggsave("LE/outs/5B_LLE.pdf",width=4,height=4)
 
 cc1=coord_cartesian(ylim=c(0.0,1.05))
-dLE|>ggplot(aes(x=Agedx,y=PLLE,col=Sex,pch=paper))+geom_line()+geom_point()+gh0+
+bjh|>mutate(Sex=factor(Sex,levels=c("Male","Female","Both")))|>
+   ggplot(aes(x=Agedx,y=PLLE,col=Sex,pch=paper))+geom_line()+geom_point()+gh0+jco+
+# dLE|>ggplot(aes(x=Agedx,y=PLLE,col=Sex,pch=paper))+geom_line()+geom_point()+gh0+jco+
   geom_point(data=en13,size=2)+cc1+
-  geom_point(data=bjh,size=1.5)+
-  geom_line(data=bjh)+
+  geom_point(data=dLE,size=1.5)+
+  # geom_line(data=bjh)+
+  geom_line(data=dLE)+
   geom_line(data=en13)+
   geom_errorbar(aes(ymin=PLLE_L,ymax=PLLE_U),data=en13,width=0.2)+
   geom_point(data=en20,size=2)+

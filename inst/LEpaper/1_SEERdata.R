@@ -24,18 +24,19 @@ myt=theme(
   legend.title = element_text(size = 9, margin = margin(b = 1, unit = "pt")),
   legend.key.spacing.y = unit(0.0, "cm"),
   legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")) 
-Dtot|>ggplot(aes(x=yrdx,y=n,col=db))+geom_point(size=1)+
+jco=ggsci::scale_color_jco()
+Dtot|>ggplot(aes(x=yrdx,y=n,col=db))+geom_point(size=1)+ jco+
   labs(y="Number of Cases",x="Year of Diagnosis",col="Database")+
   ylim(c(0,NA))+theme_classic(base_size=14)+ myt
 ggsave("LE/outs/1A_caseCounts.pdf",width=4,height=2.5) 
-ggsave("LE/outs/1A_caseCounts.png",width=4,height=2.5) 
+ggsave("LE/outs/pngs/1A_caseCounts.png",width=4,height=2.5) 
 
-D|>ggplot(aes(x=yrdx,y=n,col=db,shape=histo3))+geom_point(size=1)+
+D|>ggplot(aes(x=yrdx,y=n,col=db,shape=histo3))+geom_point(size=1)+jco+
   labs(y="Number of Cases",x="Year of Diagnosis",col="Database",shape="ICD-O-3")+
   scale_shape_manual(values = c(6,2))+
   ylim(c(0,NA))+theme_classic(base_size=14)+myt
 ggsave("LE/outs/1B_countsByCodes.pdf",width=4,height=2.5) 
-ggsave("LE/outs/1B_countsByCodes.png",width=4,height=2.5) 
+ggsave("LE/outs/pngs/1B_countsByCodes.png",width=4,height=2.5) 
 
 d=bind_rows(d20,d12,d8) #75880
 d=d|>distinct(pick(-db)) # don't count it as different via db being different

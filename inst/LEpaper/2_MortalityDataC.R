@@ -15,7 +15,8 @@ labs=c("30-59", "60-79", "80-99")[3:1]
 D=D|>mutate(incid=n/d,Age=factor(Age,levels=ord,labels=labs))
 dput(levels(D$Age))
 lh=theme(legend.direction="horizontal")
-D|>ggplot(aes(x=year,y=incid,col=Age))+geom_line()+
+jco=ggsci::scale_color_jco()
+D|>ggplot(aes(x=year,y=incid,col=Age))+geom_line()+ jco+
   labs(y="CML Mortality Rate",x="Year",col="Age at Death")+scale_y_log10() +
   scale_x_continuous(breaks=c(1999,2010,2024))+theme_classic(base_size=14)+
   theme(
@@ -27,6 +28,6 @@ D|>ggplot(aes(x=year,y=incid,col=Age))+geom_line()+
     legend.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt")
   )
 ggsave("LE/outs/2C_noHelpAt80.pdf",width=3,height=3)
-ggsave("LE/outs/2C_noHelpAt80.png",width=3,height=3)
+ggsave("LE/outs/pngs/2C_noHelpAt80.png",width=3,height=3)
 
 

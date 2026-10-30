@@ -27,8 +27,9 @@ ghp2=geom_hline(yintercept=0.02,col="gray")
 ghp03=geom_hline(yintercept=0.03,col="gray")
 leg=theme(legend.margin=margin(0,0,0,0),legend.position= c(0.75, 0.85))
 cc1=coord_cartesian(ylim=c(0.015,NA),xlim=c(2000,2025))
+jco=ggsci::scale_color_jco()
 (Dr=Dr|>mutate(yG=ifelse(year<=2013,"2013","2023")))
-Dr|>ggplot(aes(x=year,y=EAR,col=yG))+geE+geom_point(size=0.7) + #scale_y_log10(breaks=EARbrks)+
+Dr|>ggplot(aes(x=year,y=EAR,col=yG))+geE+geom_point(size=0.7) + jco+#scale_y_log10(breaks=EARbrks)+
   geom_line(aes(y=fit),data=pD)+cc1+
   scale_y_log10(breaks=EARbrks)+tc(13)+ghp2+ghp03+ylab("Excess Absolute Risk of Death")+leg+labs(x="Year",color="data through")
 ggsave(file="LE/outs/3_workflowEARm.pdf",height=3,width=3) # EAR for males
